@@ -27,7 +27,7 @@ Matrix4::Matrix4(const Matrix4& other)
 	memcpy(m_data, other.m_data, sizeof(m_data));
 }
 
-Matrix4::Matrix4(const float f1, const float f2, const float f3, const float f4, const float f5, const float f6, const float f7, const float f8, const float f9, const float f10, const float f11, const float f12, const float f13, const float f14, const float f15, const float f16)
+Matrix4::Matrix4(const f32 f1, const f32 f2, const f32 f3, const f32 f4, const f32 f5, const f32 f6, const f32 f7, const f32 f8, const f32 f9, const f32 f10, const f32 f11, const f32 f12, const f32 f13, const f32 f14, const f32 f15, const f32 f16)
 {
 	m_data[0][0] = f1;
 	m_data[1][0] = f2;
@@ -57,7 +57,7 @@ Matrix4 Matrix4::Zero()
 	return tmp;
 }
 
-Matrix4 Matrix4::Translate(const float tx,const float ty,const float tz)
+Matrix4 Matrix4::Translate(const f32 tx,const f32 ty,const f32 tz)
 {
 	Matrix4 tmp = Matrix4();
 	tmp.m_data[0][3] = tx;
@@ -66,7 +66,7 @@ Matrix4 Matrix4::Translate(const float tx,const float ty,const float tz)
 	return tmp;
 }
 
-Matrix4 Matrix4::Scale(const float sx,const float sy,const float sz)
+Matrix4 Matrix4::Scale(const f32 sx,const f32 sy,const f32 sz)
 {
 	Matrix4 tmp = Matrix4();
 	tmp.m_data[0][0] = sx;
@@ -75,12 +75,12 @@ Matrix4 Matrix4::Scale(const float sx,const float sy,const float sz)
 	return tmp;
 }
 
-Matrix4 Matrix4::RotateX(const float angle)
+Matrix4 Matrix4::RotateX(const f32 angle)
 {
 	Matrix4 tmp = Matrix4();
-	float rad = angle * M_PI / 180.0;
-	float radc = cos(rad);
-	float rads = sin(rad);
+	f32 rad = angle * M_PI / 180.0;
+	f32 radc = cos(rad);
+	f32 rads = sin(rad);
 	tmp.m_data[1][1] = radc;
 	tmp.m_data[1][2] = -rads;
 	tmp.m_data[2][1] = rads;
@@ -88,12 +88,12 @@ Matrix4 Matrix4::RotateX(const float angle)
 	return tmp;
 }
 
-Matrix4 Matrix4::RotateY(const float angle)
+Matrix4 Matrix4::RotateY(const f32 angle)
 {
 	Matrix4 tmp = Matrix4();
-	float rad = angle * M_PI / 180.0;
-	float radc = cos(rad);
-	float rads = sin(rad);
+	f32 rad = angle * M_PI / 180.0;
+	f32 radc = cos(rad);
+	f32 rads = sin(rad);
 	tmp.m_data[0][0] = radc;
 	tmp.m_data[0][2] = rads;
 	tmp.m_data[2][0] = -rads;
@@ -101,12 +101,12 @@ Matrix4 Matrix4::RotateY(const float angle)
 	return tmp;
 }
 
-Matrix4 Matrix4::RotateZ(const float angle)
+Matrix4 Matrix4::RotateZ(const f32 angle)
 {
 	Matrix4 tmp = Matrix4();
-	float rad = angle * M_PI / 180.0;
-	float radc = cos(rad);
-	float rads = sin(rad);
+	f32 rad = angle * M_PI / 180.0;
+	f32 radc = cos(rad);
+	f32 rads = sin(rad);
 	tmp.m_data[0][0] = radc;
 	tmp.m_data[0][1] = -rads;
 	tmp.m_data[1][0] = rads;
@@ -114,35 +114,35 @@ Matrix4 Matrix4::RotateZ(const float angle)
 	return tmp;
 }
 
-Matrix4 Matrix4::Rotate(float x, float y, float z, const float angle)
+Matrix4 Matrix4::Rotate(f32 x, f32 y, f32 z, const f32 angle)
 {
 	Matrix4 tmp = Matrix4();
-	const float rad = angle * M_PI / 180.0;
-	const float radc = cos(rad);
-	const float rads = sin(rad);
-	const float t = 1.0 - radc;
+	const f32 rad = angle * M_PI / 180.0;
+	const f32 radc = cos(rad);
+	const f32 rads = sin(rad);
+	const f32 t = 1.0 - radc;
 
-	const float normalizer = 1.0 / sqrt(x * x + y * y + z * z);
+	const f32 normalizer = 1.0 / sqrt(x * x + y * y + z * z);
 	x = x * normalizer;
 	y = y * normalizer;
 	z = z / normalizer;
 
-	const float tx = t * x;
-	const float ty = t * y;
-	const float tz = t * z;
+	const f32 tx = t * x;
+	const f32 ty = t * y;
+	const f32 tz = t * z;
 
-	const float txx = tx * x;
-	const float txy = tx * y;
-	const float txz = tx * z;
+	const f32 txx = tx * x;
+	const f32 txy = tx * y;
+	const f32 txz = tx * z;
 
-	const float tyy = ty * y;
-	const float tyz = ty * z;
+	const f32 tyy = ty * y;
+	const f32 tyz = ty * z;
 	
-	const float tzz = tz * z;
+	const f32 tzz = tz * z;
 	
-	const float radsx = rads * x;
-	const float radsy = rads * y;
-	const float radsz = rads * z;
+	const f32 radsx = rads * x;
+	const f32 radsy = rads * y;
+	const f32 radsz = rads * z;
 
 	tmp.m_data[0][0] = txx + radc;
 	tmp.m_data[0][1] = txy - radsz;
@@ -163,7 +163,7 @@ Matrix4 Matrix4::Rotate(float x, float y, float z, const float angle)
 	return tmp;
 }
 
-Matrix4 Matrix4::Rotate(const Vector4& v, const float angle)
+Matrix4 Matrix4::Rotate(const Vector4& v, const f32 angle)
 {
 	return Rotate(v.get_x(), v.get_y(), v.get_z(), angle);
 }
@@ -192,9 +192,9 @@ Matrix4 Matrix4::mult(const Matrix4& other) const
 {
 	Matrix4 tmp = Matrix4::Zero();
 
-	for (int i = 0; i < 4; ++i) {
-		for (int k = 0; k < 4; ++k) {
-			for (int j = 0; j < 4; ++j) {
+	for (u32 i = 0; i < 4; ++i) {
+		for (u32 k = 0; k < 4; ++k) {
+			for (u32 j = 0; j < 4; ++j) {
 				tmp.m_data[i][j] = tmp.m_data[i][j] + m_data[i][k] * other.m_data[k][j];
 			}
 		}
@@ -203,9 +203,9 @@ Matrix4 Matrix4::mult(const Matrix4& other) const
 	return tmp;
 }
 
-float Matrix4::det() const
+f32 Matrix4::det() const
 {
-        float det = 0.0f;
+        f32 det = 0.0f;
 
         det += m_data[0][0] * (m_data[1][1] * (m_data[2][2] * m_data[3][3] - m_data[2][3] * m_data[3][2]) - m_data[1][2] * (m_data[2][1] * m_data[3][3] - m_data[2][3] * m_data[3][1]) + m_data[1][3] * (m_data[2][1] * m_data[3][2] - m_data[2][2] * m_data[3][1]));
         det -= m_data[0][1] * (m_data[1][0] * (m_data[2][2] * m_data[3][3] - m_data[2][3] * m_data[3][2]) - m_data[1][2] * (m_data[2][0] * m_data[3][3] - m_data[2][3] * m_data[3][0]) + m_data[1][3] * (m_data[2][0] * m_data[3][2] - m_data[2][2] * m_data[3][0]));
@@ -218,9 +218,9 @@ float Matrix4::det() const
 std::ostream& operator<<(std::ostream& os, const Matrix4& matrix)
 {
 	os << "[";
-	for (int i = 0; i < 4; ++i) {
+	for (u32 i = 0; i < 4; ++i) {
 		os << "[";
-		for (int j = 0; j < 4; ++j) {
+		for (u32 j = 0; j < 4; ++j) {
 			os << matrix.m_data[i][j];
 			if (j != 3)
 				os << ", ";
