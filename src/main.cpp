@@ -57,6 +57,7 @@ void init(Renderer& renderer, OrthographicCamera& camera, Group& scene, std::str
     auto group = data.find("group");
     u32 index;
     f32 buffer[3];
+    u8 color_buf[3];
 
     {
         index = 0;
@@ -117,10 +118,10 @@ void init(Renderer& renderer, OrthographicCamera& camera, Group& scene, std::str
 
                 index = 0;
                 for(auto const& c : *color){
-                    buffer[index++] = c;
+                    color_buf[index++] = c;
                 }
 
-                memcpy(sp0->m_color, buffer, sizeof(buffer));
+                memcpy(sp0->m_color, color_buf, sizeof(color_buf));
                 scene.objects.push_back(sp0);
             }
         }

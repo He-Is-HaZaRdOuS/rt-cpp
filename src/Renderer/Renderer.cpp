@@ -10,7 +10,7 @@ void Renderer::Render(OrthographicCamera& camera, const Group& scene,  bool mono
     //TODO
     // Check for monochrome state and render scene accordingly
     // Save output scene as a png and append monochrome state to filename
-    for(u32 y = 0; y < m_height; ++y){
+    for(i32 y = m_height - 1; y >= 0; --y){
         for(u32 x = 0; x < m_width; ++x){
             u32 pixel = s_fragment((f32)x/(f32)m_width, (f32)y/(f32)m_height, camera, scene);
             m_image.m_data.push_back(pixel);
@@ -25,26 +25,6 @@ void Renderer::s_save() {
 }
 
 u32 Renderer::s_fragment(f32 x, f32 y, OrthographicCamera& camera, const Group& scene) {
-/*
-    x = x * 2.0 - 1.0;
-    y = y * 2.0 - 1.0;
-    Vector4 rayOrigin = Vector4(0.0, 0.0, 2.0);
-    Vector4 rayDirection = Vector4(x, y, -1.0);
-    f32 radius = 0.5;
-
-    f32 a = rayDirection.dot(rayDirection);
-    f32 b = 2.0 * rayOrigin.dot(rayDirection);
-    f32 c = rayOrigin.dot(rayOrigin) - radius * radius;
-    f32 d = b * b - 4.0 * a * c;
-
-    if(d >= 0.0)
-        return 0xffff00ff;
-
-    return 0xff000000;
-    */
-
-    x = x * 2.0 - 1.0;
-    y = y * 2.0 - 1.0;
     Ray ray = camera.generateRay(x, y);
     std::shared_ptr<Object3D> sphere = scene.objects.at(0);
 
@@ -54,7 +34,7 @@ u32 Renderer::s_fragment(f32 x, f32 y, OrthographicCamera& camera, const Group& 
     f32 d = b * b - 4.0 * a * c;
 
     if(d >= 0.0)
-        return 0xff000000 | (i32(sphere->m_color[2]*255.0) << 16) | (i32(sphere->m_color[1]*255.0) << 8) | (i32(sphere->m_color[2]*255.0));
+        return 0xff000000 | (u32((sphere->m_color[2]*(f32)d/4)) << 16) | (u32((sphere->m_color[1]*(f32)d/4)) << 8) | (u32(sphere->m_color[0]*(f32)d/4));
 
     return 0xff000000;
 

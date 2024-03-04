@@ -46,9 +46,9 @@ f32 Vector4::dot(const Vector4& other) const {
 
 Vector4 Vector4::cross(const Vector4& other) const
 {
-	const f32 f1 = m_data[1] * other.m_data[2] - other.m_data[2] * m_data[1];
-	const f32 f2 = m_data[2] * other.m_data[0] - other.m_data[0] * m_data[2];
-	const f32 f3 = m_data[0] * other.m_data[1] - other.m_data[1] * m_data[0];
+	const f32 f1 = m_data[1] * other.m_data[2] - other.m_data[1] * m_data[2];
+	const f32 f2 = m_data[2] * other.m_data[0] - other.m_data[2] * m_data[0];
+	const f32 f3 = m_data[0] * other.m_data[1] - other.m_data[0] * m_data[1];
 	const f32 f4 = m_data[3];
 
 	return {f1, f2, f3, f4};
@@ -56,9 +56,9 @@ Vector4 Vector4::cross(const Vector4& other) const
 
 Vector4 Vector4::cross_zero(const Vector4& other) const
 {
-	const f32 f1 = m_data[1] * other.m_data[2] - other.m_data[2] * m_data[1];
-	const f32 f2 = m_data[2] * other.m_data[0] - other.m_data[0] * m_data[2];
-	const f32 f3 = m_data[0] * other.m_data[1] - other.m_data[1] * m_data[0];
+	const f32 f1 = m_data[1] * other.m_data[2] - other.m_data[1] * m_data[2];
+	const f32 f2 = m_data[2] * other.m_data[0] - other.m_data[2] * m_data[0];
+	const f32 f3 = m_data[0] * other.m_data[1] - other.m_data[0] * m_data[1];
 
 	return {f1, f2, f3, 0.0};
 }
