@@ -1,5 +1,8 @@
 #include "Geometry/Group.h"
+#include "Geometry/Sphere.h"
 
-f32 Group::intersect(Ray ray, Hit hit, f32 tmin) {
-    return 0.0;
+void Group::intersect(Ray ray, Hit& hit, f32 tmin, f32 tmax) const {
+    for(auto const& obj : objects) {
+        dynamic_cast<Sphere*>(obj.get())->intersect(ray, hit, tmin, tmax);
+    }
 }

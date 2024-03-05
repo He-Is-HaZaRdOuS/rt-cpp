@@ -1,6 +1,7 @@
 #include <iostream>
 
-#include "Macros.h"
+#include "Utilities/Macros.h"
+#include "Utilities/Timer.h"
 #include "Math/Matrix4.h"
 #include "Math/Vector4.h"
 #include "Math/Random.h"
@@ -14,43 +15,37 @@
 #include "Renderer/Image.h"
 #include "Renderer/Renderer.h"
 
-void init(Renderer& renderer, OrthographicCamera& camera, Group& scene, std::string path);
+void init(Renderer& renderer, OrthographicCamera& camera, Group& scene, const std::string& path);
 
 int main() {
+    /* Start timer to measure program running time */
+    Timer timer;
 
-    /* json filenames are provided without the extension */
+    /* JSON filenames are provided without the extension */
     std::string file1 = "scene1";
     std::string file2 = "scene2";
 
+    /* Construct necessary objects */
     OrthographicCamera camera = OrthographicCamera(5, Vector4(0, 0, 10), Vector4(0, 0, -1), Vector4(0, 1, 0));
-    Renderer renderer = Renderer(file1, 512, 512, 9, 11);
+    Renderer renderer = Renderer(512, 512);
     Group scene = Group();
 
+    /* init objects and render scenes */
     init(renderer, camera, scene, file1);
+    renderer.Render(file1, camera, scene, 9, 11, false);
+    renderer.Render(file1, camera, scene, 9, 11, true);
 
-
-    renderer.Render(camera, scene, false);
-
-
-    /*
-    Image img = Image(512, 512);
-    for (u32 i = 0; i < 512*512; ++i){
-        srand((unsigned) time(NULL));
-        u32 r = PCG_Hash(i * rand());
-        r |= 0xff000000;
-        img.m_data.push_back(r);
-    }
-
-    stbi_write_png("output.png", 512, 512, 4, img.m_data.data(), 512*4);
-    */
+    init(renderer, camera, scene, file2);
+    renderer.Render(file2, camera, scene, 8, 11.5, false);
+    renderer.Render(file2, camera, scene, 8, 11.5, true);
 
     return 0;
 }
 
-void init(Renderer& renderer, OrthographicCamera& camera, Group& scene, std::string path){
+/* init objects with scene data */
+void init(Renderer& renderer, OrthographicCamera& camera, Group& scene, const std::string& path){
     std::ifstream f(RESOURCES_PATH + path + ".json");
     json data = json::parse(f);
-    //std::cout << data << "\n\n";
 
     auto orthocamera = data.find("orthocamera");
     auto background = data.find("background");
@@ -100,6 +95,7 @@ void init(Renderer& renderer, OrthographicCamera& camera, Group& scene, std::str
         //std::cout << camera.m_size;
     }
     {
+        scene.objects.clear();
         for (const auto& n : *group){
             if(n.find("sphere") != n.end()){
                 //std::cout << n << "\n";

@@ -6,37 +6,48 @@
 #include "Libs/stb_image_write.h"
 #include "Geometry/Sphere.h"
 
-void Renderer::Render(OrthographicCamera& camera, const Group& scene,  bool monochrome) {
-    //TODO
-    // Check for monochrome state and render scene accordingly
-    // Save output scene as a png and append monochrome state to filename
-    for(i32 y = m_height - 1; y >= 0; --y){
+void Renderer::Render(const std::string& filename, OrthographicCamera& camera, const Group& scene, f32 near, f32 far, bool monochrome) {
+    m_near = near;
+    m_far = far;
+    m_image.m_data.clear();
+    for(u32 y = 0; y < m_height; ++y){
         for(u32 x = 0; x < m_width; ++x){
-            u32 pixel = s_fragment((f32)x/(f32)m_width, (f32)y/(f32)m_height, camera, scene);
+            u32 pixel = s_fragment((f32)x/(f32)m_width, (f32)y/(f32)m_height, camera, scene, monochrome);
             m_image.m_data.push_back(pixel);
         }
     }
 
-    s_save();
+    if(monochrome)
+        s_save(filename + "_depth.png");
+    else
+        s_save(filename + ".png");
 }
 
-void Renderer::s_save() {
-    stbi_write_png("output.png", m_width, m_height, 4, m_image.m_data.data(), m_width*4);
+void Renderer::s_save(const std::string& path) {
+    /* flip vertically to display uv coordinates correctly */
+    stbi_flip_vertically_on_write(true);
+    stbi_write_png(path .c_str(), m_width, m_height, 4, m_image.m_data.data(), m_width*4);
 }
 
-u32 Renderer::s_fragment(f32 x, f32 y, OrthographicCamera& camera, const Group& scene) {
+u32 Renderer::s_fragment(f32 x, f32 y, const OrthographicCamera& camera, const Group& scene, bool monochrome) {
     Ray ray = camera.generateRay(x, y);
-    std::shared_ptr<Object3D> sphere = scene.objects.at(0);
+    Hit hit = Hit();
 
-    f32 a = ray.m_direction.dot(ray.m_direction);
-    f32 b = 2.0 * ray.m_origin.dot(ray.m_direction);
-    f32 c = ray.m_origin.dot(ray.m_origin) - dynamic_cast<Sphere*>(sphere.get())->m_radius * dynamic_cast<Sphere*>(sphere.get())->m_radius;
-    f32 d = b * b - 4.0 * a * c;
+    /* check for ray intersection with scene objects */
+    scene.intersect(ray, hit, m_near, m_far);
 
-    if(d >= 0.0)
-        return 0xff000000 | (u32((sphere->m_color[2]*(f32)d/4)) << 16) | (u32((sphere->m_color[1]*(f32)d/4)) << 8) | (u32(sphere->m_color[0]*(f32)d/4));
+    /* if no hit, draw background colors */
+    if(hit.get_t() == FLT_MAX)
+        return 0xff000000 | ((u32)(m_background_color[2]) << 16) | ((u32)(m_background_color[1]) << 8) | (u32)(m_background_color[0]);
 
-    return 0xff000000;
+    /* if monochrome, draw depth data */
+    if(monochrome) {
+        f32 depth = (m_far - hit.get_t()) / (m_far - m_near);
+        return 0xff000000 | ((u32)(depth*255.0) << 16) | ((u32)(depth*255.0) << 8) | (u32)(depth*255.0);
+    }
+    /* otherwise draw object's colors */
+    else
+        return 0xff000000 | (u32(hit.color[2] << 16)) | (u32(hit.color[1] << 8)) | u32(hit.color[0]);
 
 }
 

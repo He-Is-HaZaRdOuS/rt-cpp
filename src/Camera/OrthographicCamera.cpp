@@ -1,7 +1,7 @@
 #include <iostream>
 #include "Camera/OrthographicCamera.h"
 
-Ray OrthographicCamera::generateRay(f32 x, f32 y) {
+Ray OrthographicCamera::generateRay(f32 x, f32 y) const {
     Ray r = Ray();
 
     r.m_origin.set_x(m_center.get_x() + (x - 0.5) * m_size * m_horizontal.get_x() + (y - 0.5) * m_size * m_up.get_x());

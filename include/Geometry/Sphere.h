@@ -1,5 +1,4 @@
 #pragma once
-#include "Macros.h"
 #include "Geometry/Object3D.h"
 #include <iostream>
 
@@ -10,7 +9,7 @@ public:
 
     Sphere(f32 radius, Vector4 center): m_radius(radius), m_center(center){};
 
-    f32 intersect(Ray ray, Hit hit, f32 tmin) override;
+    void intersect(Ray ray, Hit& hit, f32 tmin, f32 tmax) const override;
     void id() override {std::cout<<"Sphere\n";};
 
     f32 m_radius;

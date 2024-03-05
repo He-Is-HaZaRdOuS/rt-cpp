@@ -1,17 +1,21 @@
 #pragma once
-#include "Macros.h"
+#include "Utilities/Macros.h"
 #include <Math/Vector4.h>
+#include <cfloat>
+#include <cstring>
 
 class Hit {
 public:
-    explicit Hit(f32 t);
+    Hit() = default;
     ~Hit() = default;
 
     [[nodiscard]] f32 get_t() const { return t; }
-    Vector4 get_color() { return color; }
-
+    u8* get_color() { return color; }
+    void set_t(f32 newDistance) { this->t = newDistance; }
+    void set_color(u8 newColor[]) { memcpy(this->color, newColor, sizeof(this->color)); }
+    f32 t{FLT_MAX};
+    u8 color[3]{0,0,0};
 private:
-    f32 t;
-    Vector4 color;
+
 
 };

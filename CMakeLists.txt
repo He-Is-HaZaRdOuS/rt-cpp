@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.27)
-project(rt-cpp VERSION 0.1.0)
+project(Beam-Pursuit VERSION 0.1.0)
 #set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_CXX_STANDARD 17)
 

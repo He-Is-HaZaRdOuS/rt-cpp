@@ -1,5 +1,5 @@
 #pragma once
-#include "Macros.h"
+#include "Utilities/Macros.h"
 #include "Libs/json.h"
 #include "Camera/OrthographicCamera.h"
 #include "Geometry/Group.h"
@@ -14,20 +14,19 @@ using json = nlohmann::json;
 
 class Renderer {
 public:
-    Renderer(std::string path, u32 width, u32 height, u32 near, u32 far) : m_filename(path), m_width(width), m_height(height), m_near(near), m_far(far),
-                                                                           m_image(width, height){};
+    Renderer(u32 width, u32 height) : m_width(width), m_height(height), m_image(width, height){};
     ~Renderer() = default;
-    void Render(OrthographicCamera& camera, const Group& scene, bool monochrome);
+    void Render(const std::string& filename, OrthographicCamera& camera, const Group& scene, f32 near, f32 far, bool monochrome);
 
-    f32 m_background_color[3];
+    u8 m_background_color[3];
 private:
-    void s_save();
-    u32 s_fragment(f32 x, f32 y, OrthographicCamera& camera, const Group& scene);
+    void s_save(const std::string& path);
+    u32 s_fragment(f32 x, f32 y, const OrthographicCamera& camera, const Group& scene, bool monochrome);
 
     Image m_image;
     std::string m_filename;
     u32 m_width;
     u32 m_height;
-    u32 m_near;
-    u32 m_far;
+    f32 m_near;
+    f32 m_far;
 };
