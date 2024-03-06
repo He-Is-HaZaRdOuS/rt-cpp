@@ -32,12 +32,12 @@ int main() {
 
     /* init objects and render scenes */
     init(renderer, camera, scene, file1);
-    renderer.Render(file1, camera, scene, 9, 11, false);
     renderer.Render(file1, camera, scene, 9, 11, true);
+    //renderer.Render(file1, camera, scene, 9, 11, true);
 
     init(renderer, camera, scene, file2);
-    renderer.Render(file2, camera, scene, 8, 11.5, false);
     renderer.Render(file2, camera, scene, 8, 11.5, true);
+    //renderer.Render(file2, camera, scene, 8, 11.5, true);
 
     return 0;
 }

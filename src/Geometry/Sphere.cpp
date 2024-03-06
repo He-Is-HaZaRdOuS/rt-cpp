@@ -12,6 +12,9 @@ void Sphere::intersect(Ray ray, Hit& hit, f32 tmin, f32 tmax) const {
         return;
     }
 
+    //TODO
+    // CHECK IF EITHER T0 OR T1 ARE NEGATIVE AND USE THE POSITIVE ONE
+    // MEASURE THE RESULTS
     //std::cout << "hit ";
     f32 sqrtd = sqrt(discriminant);
     f32 t0 = (-b - sqrtd) / (2.0f * a);
