@@ -5,6 +5,7 @@
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 #include "Libs/stb_image_write.h"
 #include "Geometry/Sphere.h"
+#include "Utilities/Timer.h"
 
 void Renderer::Render(const std::string& filename, OrthographicCamera& camera, const Group& scene, f32 near, f32 far, bool monochrome) {
     m_near = near;
