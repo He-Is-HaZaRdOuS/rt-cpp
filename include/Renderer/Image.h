@@ -7,7 +7,7 @@ public:
     Image(u32 width, u32 height);
     ~Image() = default;
 
-    void init(const u8 base_color[]);
+    void init(const f32 base_color[]);
     void set_pixel(u32 x, u32 y, u32 color);
     u32 get_pixel(u32 x, u32 y);
 

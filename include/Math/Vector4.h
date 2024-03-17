@@ -42,6 +42,9 @@ public:
 	friend std::ostream& operator<<(std::ostream& os, const Vector4& vector);
 	friend Vector4 operator+(const Vector4& self, const Vector4& other);
 	friend Vector4 operator-(const Vector4& self, const Vector4& other);
+    friend Vector4 operator*(const Vector4& self, f32 other);
+    friend Vector4 operator*(f32 other, const Vector4& self);
+    friend Vector4 operator+(const Vector4& self, f32 other);
 
 private:
 	f32 m_data[4];

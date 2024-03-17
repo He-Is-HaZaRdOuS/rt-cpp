@@ -170,22 +170,10 @@ Matrix4 Matrix4::Rotate(const Vector4& v, const f32 angle)
 
 Vector4 Matrix4::mult(const Vector4& v) const
 {
-	return {m_data[0][0] * v.get_x()
-		+ m_data[0][1] * v.get_y()
-		+ m_data[0][2] * v.get_z()
-		+ m_data[0][3] * v.get_w(),
-		m_data[1][0] * v.get_x()
-		+ m_data[1][1] * v.get_y()
-		+ m_data[1][2] * v.get_z()
-		+ m_data[1][3] * v.get_w(),
-		m_data[2][0] * v.get_x()
-		+ m_data[2][1] * v.get_y()
-		+ m_data[2][2] * v.get_z()
-		+ m_data[2][3] * v.get_w(),
-		m_data[3][0] * v.get_x()
-		+ m_data[3][1] * v.get_y()
-		+ m_data[3][2] * v.get_z()
-		+ m_data[3][3] * v.get_w()};
+	return { m_data[0][0] * v.get_x() + m_data[0][1] * v.get_y() + m_data[0][2] * v.get_z() + m_data[0][3] * v.get_w(),
+		m_data[1][0] * v.get_x() + m_data[1][1] * v.get_y() + m_data[1][2] * v.get_z() + m_data[1][3] * v.get_w(),
+		m_data[2][0] * v.get_x() + m_data[2][1] * v.get_y() + m_data[2][2] * v.get_z() + m_data[2][3] * v.get_w(),
+		m_data[3][0] * v.get_x() + m_data[3][1] * v.get_y() + m_data[3][2] * v.get_z() + m_data[3][3] * v.get_w() };
 }
 
 Matrix4 Matrix4::mult(const Matrix4& other) const

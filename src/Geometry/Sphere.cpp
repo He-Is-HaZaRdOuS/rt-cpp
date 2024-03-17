@@ -16,18 +16,31 @@ void Sphere::intersect(Ray ray, Hit& hit, f32 tmin, f32 tmax) const {
     // CHECK IF EITHER T0 OR T1 ARE NEGATIVE AND USE THE POSITIVE ONE
     // MEASURE THE RESULTS
     //std::cout << "hit ";
-    f32 sqrtd = sqrt(discriminant);
+    f32 sqrtd = (f32) sqrt(discriminant);
     f32 t0 = (-b - sqrtd) / (2.0f * a);
-    f32 t1 = (-b + sqrtd) / (2.0f * a); //unused
+    f32 t1 = (-b + sqrtd) / (2.0f * a);
+    f32 t;
+
+
+    if(t0 > 0 && t1 > 0) {
+        t = (t0 > t1) ? t1 : t0;
+    }
+    else if(t0 < 0 && t1 > 0)
+        t = t1;
+    else if(t1 < 0 && t0 > 0)
+        t = t0;
+    else
+        return;
+
 
     /* if t-distance inside hit is smaller than current hit distance, do nothing */
     /* also discard when hit is outside the frustum ( < near && > far ) */
-    if(hit.get_t() < t0 || t0 < tmin || t0 > tmax){
+    if(hit.get_t() < t || t < tmin || t > tmax){
         return;
     }
 
-    hit.set_t(t0);
-    hit.set_color((u8*)m_color);
-
-    return;
+    hit.set_t(t);
+    hit.set_color(m_color);
+    hit.set_normal((ray.m_origin + ray.m_direction * t) - m_center);
+    hit.m_normal.normalize();
 }

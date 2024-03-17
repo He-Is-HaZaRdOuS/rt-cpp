@@ -85,10 +85,22 @@ std::ostream& operator<<(std::ostream& os, const Vector4& vector)
 
 Vector4 operator+(const Vector4& self, const Vector4& other)
 {
-	return {self.m_data[0] + other.m_data[0], self.m_data[1] + other.m_data[1], self.m_data[2] + other.m_data[2], 1.0};
+	return {self.m_data[0] + other.m_data[0], self.m_data[1] + other.m_data[1], self.m_data[2] + other.m_data[2], self.m_data[3]};
 }
 
 Vector4 operator-(const Vector4& self, const Vector4& other)
 {
-	return {self.m_data[0] - other.m_data[0], self.m_data[1] - other.m_data[1], self.m_data[2] - other.m_data[2], 1.0};
+	return {self.m_data[0] - other.m_data[0], self.m_data[1] - other.m_data[1], self.m_data[2] - other.m_data[2], self.m_data[3]};
+}
+
+Vector4 operator*(const Vector4 &self, f32 other) {
+    return {self.m_data[0] * other, self.m_data[1] * other, self.m_data[2] * other, self.m_data[3]};
+}
+
+Vector4 operator*(f32 other, const Vector4 &self) {
+    return {self.m_data[0] * other, self.m_data[1] * other, self.m_data[2] * other, self.m_data[3]};
+}
+
+Vector4 operator+(const Vector4 &self, f32 other) {
+    return {self.m_data[0] + other, self.m_data[1] + other, self.m_data[2] + other, self.m_data[3]};
 }

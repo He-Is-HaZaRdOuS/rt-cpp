@@ -1,22 +1,20 @@
 #pragma once
+#include "Utilities/Macros.h"
 #include "Camera/Camera.h"
 #include "Beam/Ray.h"
 #include "Math/Vector4.h"
 #include <iostream>
 
-class OrthographicCamera : public Camera {
+class OrthographicCamera : virtual public Camera {
 public:
 
-    OrthographicCamera(const u32 size, const Vector4& center, const Vector4& direction, const Vector4& up) : m_size(size), m_center(center), m_direction(direction), m_up(up), m_horizontal(m_direction.cross_zero(m_up)){
-        /*
-        std::cout << m_direction;
-        std::cout << m_up;
-        std::cout << m_horizontal;
-         */
+    OrthographicCamera() = default;
+    OrthographicCamera(const u32 size, const Vector4& center, const Vector4& direction, const Vector4& up) : m_size(size), m_center(center), m_direction(direction), m_up(up){
+        /*do nothing*/
     };
-    ~OrthographicCamera(){/*nothing*/};
+    ~OrthographicCamera() override = default;
 
-    Ray generateRay(f32 x, f32 y) const override;
+    [[nodiscard]] Ray generateRay(f32 x, f32 y) const override;
 
     u32 m_size{};
     Vector4 m_center;
