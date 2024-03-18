@@ -95,3 +95,22 @@ Vector3 operator*(const Matrix3& self, const Vector3& other)
 {
     return self.mult(other);
 }
+
+Matrix3 Matrix3::inverse() const {
+    f32 detr = det();
+    f32 invdetr = 1 / detr;
+
+    Matrix3 tmp = Matrix3();
+
+    tmp.m_data[0][0] = (m_data[1][1] * m_data[2][2] - m_data[2][1] * m_data[1][2]) * invdetr;
+    tmp.m_data[0][1] = (m_data[0][2] * m_data[2][1] - m_data[0][1] * m_data[2][2]) * invdetr;
+    tmp.m_data[0][2] = (m_data[0][1] * m_data[1][2] - m_data[0][2] * m_data[1][1]) * invdetr;
+    tmp.m_data[1][0] = (m_data[1][2] * m_data[2][0] - m_data[1][0] * m_data[2][2]) * invdetr;
+    tmp.m_data[1][1] = (m_data[0][0] * m_data[2][2] - m_data[0][2] * m_data[2][0]) * invdetr;
+    tmp.m_data[1][2] = (m_data[1][0] * m_data[0][2] - m_data[0][0] * m_data[1][2]) * invdetr;
+    tmp.m_data[2][0] = (m_data[1][0] * m_data[2][1] - m_data[2][0] * m_data[1][1]) * invdetr;
+    tmp.m_data[2][1] = (m_data[2][0] * m_data[0][1] - m_data[0][0] * m_data[2][1]) * invdetr;
+    tmp.m_data[2][2] = (m_data[0][0] * m_data[1][1] - m_data[1][0] * m_data[0][1]) * invdetr;
+
+    return tmp;
+}

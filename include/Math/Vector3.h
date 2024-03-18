@@ -38,6 +38,7 @@ public:
     friend Vector3 operator-(const Vector3& self, const Vector3& other);
     friend Vector3 operator+(const Vector3& self, f32 other);
     friend Vector3 operator*(const Vector3& self, f32 other);
+    friend Vector3 operator*( f32 other, const Vector3& self);
     friend Vector3 operator-(const Vector3& self);
     friend Vector3 operator*(const Vector3& self, const Vector3& other);
 

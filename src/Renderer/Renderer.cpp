@@ -73,13 +73,13 @@ inline void Renderer::s_fragment(f32 x, f32 y, u32 nx, u32 ny, bool monochrome, 
     hit.m_normal.normalize();
 
 // Calculate diffuse component
-    f32 diffuseC = std::max((f32)(hit.m_normal.dot(-light.m_direction)), (f32)0.0);
+    f32 diffuseK = std::max((f32)(hit.m_normal.dot(-light.m_direction)), (f32)0.0);
 
 // Calculate ambient component
     Vector3 ambientColor(m_ambient_color[0], m_ambient_color[1], m_ambient_color[2]);
 
 // Compute final pixel color
-    Vector3 pixelColor = ambientColor + light.m_color * diffuseC;
+    Vector3 pixelColor = ambientColor * hit.m_color + diffuseK * (hit.m_color * light.m_color);
 
 
     /* if no hit, draw background colors */
@@ -103,5 +103,5 @@ inline void Renderer::s_fragment(f32 x, f32 y, u32 nx, u32 ny, bool monochrome, 
 
 
 // Set the pixel color in the image
-    m_image.set_pixel(nx, ny, ConvertToRGBA(pixelColor * hit.m_color));
+    m_image.set_pixel(nx, ny, ConvertToRGBA(pixelColor));
 }

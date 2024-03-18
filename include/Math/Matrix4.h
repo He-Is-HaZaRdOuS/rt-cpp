@@ -1,5 +1,6 @@
 #pragma once
 #include "Utilities/Macros.h"
+#include "Math/Matrix3.h"
 #include "Math/Vector4.h"
 #include <ostream>
 
@@ -26,6 +27,7 @@ public:
 	[[nodiscard]] Vector4 mult(const Vector4& v) const;
 	[[nodiscard]] Matrix4 mult(const Matrix4& other) const;
 	[[nodiscard]] f32 det() const;
+    [[nodiscard]] Matrix4 inverse() const;
 
 	friend std::ostream& operator<<(std::ostream& os, const Matrix4& matrix);
 	friend Matrix4 operator*(const Matrix4& self, const Matrix4& other);

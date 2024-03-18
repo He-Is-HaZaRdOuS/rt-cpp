@@ -1,9 +1,9 @@
 {
-	"orthocamera" : {
+	"perspectivecamera" : {
 		"center" : [0, 0, 10],
 		"direction" : [0, 0, -1],
 		"up" : [0, 1, 0],
-		"size" : 5
+		"angle" : 30
 	},
 	"background" : {
 		"color" : [0.2, 0, 0.6],

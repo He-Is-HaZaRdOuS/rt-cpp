@@ -228,3 +228,92 @@ Vector4 operator*(const Matrix4& self, const Vector4& other)
 {
 	return self.mult(other);
 }
+
+Matrix4 Matrix4::inverse() const {
+    f32 detr = det();
+
+    Matrix4 tmp = Matrix4();
+
+    Matrix3 m00 = Matrix3(m_data[1][1], m_data[1][2], m_data[1][3],
+                          m_data[2][1], m_data[2][2], m_data[2][3],
+                          m_data[3][1], m_data[3][2], m_data[3][3]);
+
+    Matrix3 m01 = Matrix3(m_data[1][0], m_data[1][2], m_data[1][3],
+                          m_data[2][0], m_data[2][2], m_data[2][3],
+                          m_data[3][0], m_data[3][2], m_data[3][3]);
+
+    Matrix3 m02 = Matrix3(m_data[1][0], m_data[1][1], m_data[1][3],
+                          m_data[2][0], m_data[2][1], m_data[2][3],
+                          m_data[3][0], m_data[3][1], m_data[3][3]);
+
+    Matrix3 m03 = Matrix3(m_data[1][0], m_data[1][1], m_data[1][2],
+                          m_data[2][0], m_data[2][1], m_data[2][2],
+                          m_data[3][0], m_data[3][1], m_data[3][2]);
+
+    Matrix3 m10 = Matrix3(m_data[0][1], m_data[0][2], m_data[0][3],
+                          m_data[2][1], m_data[2][2], m_data[2][3],
+                          m_data[3][1], m_data[3][2], m_data[3][3]);
+
+    Matrix3 m11 = Matrix3(m_data[0][0], m_data[0][2], m_data[0][3],
+                          m_data[2][0], m_data[2][2], m_data[2][3],
+                          m_data[3][0], m_data[3][2], m_data[3][3]);
+
+    Matrix3 m12 = Matrix3(m_data[0][0], m_data[0][1], m_data[0][3],
+                          m_data[2][0], m_data[2][1], m_data[2][3],
+                          m_data[3][0], m_data[3][1], m_data[3][3]);
+
+    Matrix3 m13 = Matrix3(m_data[0][0], m_data[0][1], m_data[0][2],
+                          m_data[2][0], m_data[2][1], m_data[2][2],
+                          m_data[3][0], m_data[3][1], m_data[3][2]);
+
+    Matrix3 m20 = Matrix3(m_data[0][1], m_data[0][2], m_data[0][3],
+                          m_data[1][1], m_data[1][2], m_data[1][3],
+                          m_data[3][1], m_data[3][2], m_data[3][3]);
+
+    Matrix3 m21 = Matrix3(m_data[0][0], m_data[0][2], m_data[0][3],
+                          m_data[1][0], m_data[1][2], m_data[1][3],
+                          m_data[3][0], m_data[3][2], m_data[3][3]);
+
+    Matrix3 m22 = Matrix3(m_data[0][0], m_data[0][1], m_data[0][3],
+                          m_data[1][0], m_data[1][1], m_data[1][3],
+                          m_data[3][0], m_data[3][1], m_data[3][3]);
+
+    Matrix3 m23 = Matrix3(m_data[0][0], m_data[0][1], m_data[0][2],
+                          m_data[1][0], m_data[1][1], m_data[1][2],
+                          m_data[3][0], m_data[3][1], m_data[3][2]);
+
+    Matrix3 m30 = Matrix3(m_data[0][1], m_data[0][2], m_data[0][3],
+                          m_data[1][1], m_data[1][2], m_data[1][3],
+                          m_data[2][1], m_data[2][2], m_data[2][3]);
+
+    Matrix3 m31 = Matrix3(m_data[0][0], m_data[0][2], m_data[0][3],
+                          m_data[1][0], m_data[1][2], m_data[1][3],
+                          m_data[2][0], m_data[2][2], m_data[2][3]);
+
+    Matrix3 m32 = Matrix3(m_data[0][0], m_data[0][1], m_data[0][3],
+                          m_data[1][0], m_data[1][1], m_data[1][3],
+                          m_data[2][0], m_data[2][1], m_data[2][3]);
+
+    Matrix3 m33 = Matrix3(m_data[0][0], m_data[0][1], m_data[0][2],
+                          m_data[1][0], m_data[1][1], m_data[1][2],
+                          m_data[2][0], m_data[2][1], m_data[2][2]);
+
+    tmp.m_data[0][0] = m00.det()/detr;
+    tmp.m_data[0][1] = -m10.det()/detr;
+    tmp.m_data[0][2] = m20.det()/detr;
+    tmp.m_data[0][3] = -m30.det()/detr;
+    tmp.m_data[1][0] = -m01.det()/detr;
+    tmp.m_data[1][1] = m11.det()/detr;
+    tmp.m_data[1][2] = -m21.det()/detr;
+    tmp.m_data[1][3] = m31.det()/detr;
+    tmp.m_data[2][0] = m02.det()/detr;
+    tmp.m_data[2][1] = -m12.det()/detr;
+    tmp.m_data[2][2] = m22.det()/detr;
+    tmp.m_data[2][3] = -m32.det()/detr;
+    tmp.m_data[3][0] = -m03.det()/detr;
+    tmp.m_data[3][1] = m13.det()/detr;
+    tmp.m_data[3][2] = -m23.det()/detr;
+    tmp.m_data[3][3] = m33.det()/detr;
+
+    return tmp;
+}
