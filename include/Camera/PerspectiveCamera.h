@@ -12,7 +12,6 @@ public:
     PerspectiveCamera() = default;
     PerspectiveCamera(const f32 angle, const Vector4& center, const Vector4& direction, const Vector4& up) : m_angle(angle), m_center(center), m_direction(direction), m_up(up), m_horizontal(m_direction.cross_zero(m_up)){
         /* calculate scale factor */
-        m_scale = (f32)tan((m_angle) * (M_PI / 180));
     };
     ~PerspectiveCamera() override = default;
 

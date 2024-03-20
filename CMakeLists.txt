@@ -32,6 +32,11 @@ if(CMAKE_BUILD_TYPE MATCHES "Release")
             PUBLIC -DNDEBUG -O2)
 endif()
 
+find_package(OpenMP)
+if(OpenMP_CXX_FOUND)
+    target_link_libraries("${CMAKE_PROJECT_NAME}" PUBLIC OpenMP::OpenMP_CXX)
+endif()
+
 target_compile_definitions("${CMAKE_PROJECT_NAME}" PUBLIC RESOURCES_PATH="${CMAKE_CURRENT_SOURCE_DIR}/res/") # This is useful to get an ASSETS_PATH in your IDE during development but you should comment this if you compile a release version and uncomment the next line
 #target_compile_definitions("${CMAKE_PROJECT_NAME}" PUBLIC RESOURCES_PATH="./res/") # Uncomment this line to setup the ASSETS_PATH macro to the final assets directory when you share the project
 

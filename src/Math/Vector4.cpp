@@ -104,3 +104,11 @@ Vector4 operator*(f32 other, const Vector4 &self) {
 Vector4 operator+(const Vector4 &self, f32 other) {
     return {self.m_data[0] + other, self.m_data[1] + other, self.m_data[2] + other, self.m_data[3]};
 }
+
+f32 Vector4::dot(const Vector3 &other) const {
+    return m_data[0] * other.get_x() + m_data[1] * other.get_y() + m_data[2] * other.get_z();
+}
+
+Vector4 operator-(const Vector4 &self, f32 other) {
+    return {self.m_data[0] - other, self.m_data[1] - other, self.m_data[2] - other, self.m_data[3]};
+}

@@ -5,7 +5,7 @@ Timer::Timer() {
 }
 
 Timer::~Timer() {
-  Stop();
+  //Stop();
 }
 
 void Timer::Stop() {

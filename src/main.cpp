@@ -15,6 +15,9 @@
 #include "Geometry/Object3D.h"
 #include "Geometry/Sphere.h"
 #include "Geometry/Group.h"
+#include "Geometry/Triangle.h"
+#include "Geometry/Transform.h"
+#include "Geometry/Plane.h"
 #include "Renderer/Image.h"
 #include "Renderer/Renderer.h"
 #include "Renderer/Light.h"
@@ -28,26 +31,42 @@ void collectScene(const json &data, Group &scene);
 
 int main() {
     /* Start timer to measure program running time */
-    Timer timer;
+    //Timer timer;
 
     /* JSON filenames are provided without the extension */
-    std::string file1 = "scene3_perspective";
-    std::string file2 = "scene2";
+    std::string file1 = "scene1_diffuse";
+    std::string file2 = "scene2_ambient";
+    std::string file3 = "scene3_perspective";
+    std::string file4 = "scene4_plane";
+    std::string file5 = "scene5_sphere_triangle";
 
-    /* Construct necessary objects */
+    /* Construct necessary m_objects */
     std::shared_ptr<Camera> camera_ptr;
     Renderer renderer = Renderer(512, 512);
     Group scene = Group();
     Light light = Light();
 
-    /* init objects and render scenes */
-    init(renderer, camera_ptr, scene, light, file1);
-    renderer.Render(file1, camera_ptr, scene, light, 8, 11.5, true);
-    //renderer.Render(file1, camera, scene, 9, 11, true);
+    std::cout << "STARTING GLOBAL TIMER!!!" << std::endl;
+    Timer timer;
 
-    //init(renderer, camera, scene, file2);
-    //renderer.Render(file2, camera, scene, 8, 11.5, true);
-    //renderer.Render(file2, camera, scene, 8, 11.5, true);
+    /* init m_objects and render scenes */
+    init(renderer, camera_ptr, scene, light, file1);
+    renderer.Render(file1, camera_ptr, scene, light, 2, 40, true);
+
+    init(renderer, camera_ptr, scene, light, file2);
+    renderer.Render(file2, camera_ptr, scene, light, 2, 40, true);
+
+    init(renderer, camera_ptr, scene, light, file3);
+    renderer.Render(file3, camera_ptr, scene, light, 2, 40, true);
+
+    init(renderer, camera_ptr, scene, light, file4);
+    renderer.Render(file4, camera_ptr, scene, light, 2, 40, true);
+
+    init(renderer, camera_ptr, scene, light, file5);
+    renderer.Render(file5, camera_ptr, scene, light, 2, 40, true);
+
+    std::cout << "STOPPING GLOBAL TIMER!!!" << std::endl;
+    timer.Stop();
 
     return 0;
 }
@@ -159,6 +178,7 @@ std::shared_ptr<Camera> collectCamera(const json &data) {
 
 void collectBackground(const json &data, Renderer &renderer) {
     u32 index;
+    f32 buffer[3];
 
     if(data.contains("background")){
         try {
@@ -168,16 +188,18 @@ void collectBackground(const json &data, Renderer &renderer) {
                 index = 0;
                 for(const auto& n : *background->find("color")){
                     //std::cout << n << "\n";
-                    renderer.m_background_color[index++] = n;
+                    buffer[index++] = n;
                 }
+                renderer.m_background_color = Vector3(buffer[0], buffer[1], buffer[2]);
             }
 
             {
                 index = 0;
                 for(const auto& n : *background->find("ambient")){
                     //std::cout << n << "\n";
-                    renderer.m_ambient_color[index++] = n;
+                    buffer[index++] = n;
                 }
+                renderer.m_ambient_color = Vector3(buffer[0], buffer[1], buffer[2]);
             }
 
         }
@@ -238,10 +260,10 @@ void collectScene(const json &data, Group &scene) {
         try {
             auto group = data.find("group");
             {
-                scene.objects.clear();
+                scene.m_objects.clear();
                 for (const auto& n : *group){
                     if(n.contains("sphere")){
-                        std::cout << n << "\n";
+                        //std::cout << n << "\n";
                         auto const& sphere = n.find("sphere");
                         auto const& center = sphere->find("center");
                         auto const& radius = sphere->find("radius");
@@ -261,11 +283,11 @@ void collectScene(const json &data, Group &scene) {
                         }
 
                         sp0->set_color(buffer);
-                        scene.objects.push_back(sp0);
+                        scene.m_objects.push_back(sp0);
                     }
 
                     if(n.contains("triangle")){
-                        std::cout << n << "\n";
+                        //std::cout << n << "\n";
                         auto const& triangle = n.find("triangle");
                         auto const& v1 = triangle->find("v1");
                         auto const& v2 = triangle->find("v2");
@@ -294,6 +316,40 @@ void collectScene(const json &data, Group &scene) {
 
                         //TODO
                         // Make a shared_ptr<Triangle> and add it to scene vector
+                        std::shared_ptr<Triangle> tr0 = std::make_shared<Triangle>(Triangle({v1_buf[0], v1_buf[1], v1_buf[2]},
+                                                                                            {v2_buf[0], v2_buf[1], v2_buf[2]},
+                                                                                            {v3_buf[0], v3_buf[1], v3_buf[2]}));
+                        tr0->set_color(buffer);
+                        scene.m_objects.push_back(tr0);
+
+                    }
+
+                    if(n.contains("plane")){
+                        //std::cout << n << "\n";
+                        auto const& plane = n.find("plane");
+                        auto const& normal = plane->find("normal");
+                        auto const& color = plane->find("color");
+                        auto const& offset = plane->find("offset");
+
+                        index = 0;
+                        for(auto const& p : *normal){
+                            v1_buf[index++] = p;
+                        }
+
+                        index = 0;
+                        for(auto const& c : *color){
+                            buffer[index++] = c;
+                        }
+
+                        auto d = offset->dump();
+
+                        //TODO
+                        // Make a shared_ptr<Plane> and add it to scene vector
+                        std::shared_ptr<Plane> p0 = std::make_shared<Plane>(Plane());
+                        p0->set_color(buffer);
+                        p0->m_d = stof(d);
+                        p0->m_normal = {v1_buf[0], v1_buf[1], v1_buf[2]};
+                        scene.m_objects.push_back(p0);
 
                     }
                 }
@@ -307,7 +363,7 @@ void collectScene(const json &data, Group &scene) {
 
 }
 
-/* init objects with scene data */
+/* init m_objects with scene data */
 void init(Renderer& renderer, std::shared_ptr<Camera>& camera, Group& scene, Light &light, const std::string& path){
     std::ifstream f(RESOURCES_PATH + path + ".json");
     json data = json::parse(f);

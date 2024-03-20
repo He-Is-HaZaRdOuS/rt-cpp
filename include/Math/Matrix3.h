@@ -19,6 +19,7 @@ public:
     [[nodiscard]] Matrix3 mult(const Matrix3& other) const;
     [[nodiscard]] f32 det() const;
     [[nodiscard]] Matrix3 inverse() const;
+    [[nodiscard]] Matrix3 transpose() const;
 
     friend std::ostream& operator<<(std::ostream& os, const Matrix3& matrix);
     friend Matrix3 operator*(const Matrix3& self, const Matrix3& other);

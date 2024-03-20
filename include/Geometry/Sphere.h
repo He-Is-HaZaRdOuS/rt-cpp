@@ -2,7 +2,7 @@
 #include "Geometry/Object3D.h"
 #include <iostream>
 
-class Sphere : public Object3D {
+class Sphere : public virtual Object3D {
 public:
     Sphere() = default;
     ~Sphere() override = default;

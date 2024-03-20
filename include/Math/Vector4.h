@@ -1,5 +1,6 @@
 #pragma once
 #include "Utilities/Macros.h"
+#include "Math/Vector3.h"
 #include <ostream>
 
 class Vector4 {
@@ -35,6 +36,7 @@ public:
 
 	[[nodiscard]] f32 magnitude() const;
 	[[nodiscard]] f32 dot(const Vector4& other) const;
+    [[nodiscard]] f32 dot(const Vector3& other) const;
 	[[nodiscard]] Vector4 cross(const Vector4& other) const;
 	[[nodiscard]] Vector4 cross_zero(const Vector4& other) const;
 	void normalize();
@@ -45,6 +47,7 @@ public:
     friend Vector4 operator*(const Vector4& self, f32 other);
     friend Vector4 operator*(f32 other, const Vector4& self);
     friend Vector4 operator+(const Vector4& self, f32 other);
+    friend Vector4 operator-(const Vector4& self, f32 other);
 
 private:
 	f32 m_data[4];

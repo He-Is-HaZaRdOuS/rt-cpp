@@ -317,3 +317,15 @@ Matrix4 Matrix4::inverse() const {
 
     return tmp;
 }
+
+Matrix4 Matrix4::transpose() const {
+    Matrix4 tmp = Matrix4();
+
+    for(int i = 0; i < 4; ++i) {
+        for(int j = 0; j < 4; ++j) {
+            tmp.m_data[i][j] = m_data[j][i];
+        }
+    }
+
+    return tmp;
+}

@@ -20,11 +20,12 @@ public:
     ~Renderer() = default;
     void Render(const std::string& filename, const std::shared_ptr<Camera>& camera, const Group& scene, Light& light, f32 near, f32 far, bool monochrome);
 
-    f32 m_background_color[3];
-    f32 m_ambient_color[3];
+    Vector3 m_background_color;
+    Vector3 m_ambient_color;
+    Vector3 m_global_color;
 private:
     void s_save(const std::string& path, bool monochrome);
-    inline void s_fragment(f32 x, f32 y, u32 nx, u32 ny, bool monochrome, const std::shared_ptr<Camera>& camera, const Group& scene, Light &light, Hit& hit);
+    inline void s_fragment(f32 x, f32 y, u32 nx, u32 ny, bool monochrome, const std::shared_ptr<Camera>& camera, const Group& scene, const Light &light, Hit& hit);
 
     Image m_image;
     Image m_image_depth;

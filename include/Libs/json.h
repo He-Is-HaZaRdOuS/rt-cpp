@@ -7238,7 +7238,7 @@ class json_sax_dom_callback_parser
             return {false, nullptr};
         }
 
-        // we now only expect arrays and objects
+        // we now only expect arrays and m_objects
         JSON_ASSERT(ref_stack.back()->is_array() || ref_stack.back()->is_object());
 
         // array
@@ -9484,7 +9484,7 @@ class binary_reader
     /*!
     @brief Read a BSON element list (as specified in the BSON-spec)
 
-    The same binary layout is used for objects and arrays, hence it must be
+    The same binary layout is used for m_objects and arrays, hence it must be
     indicated with the argument @a is_array which one is expected
     (true --> array, false --> object).
 
@@ -11739,7 +11739,7 @@ class binary_reader
             return false;
         }
 
-        // do not accept ND-array size in objects in BJData
+        // do not accept ND-array size in m_objects in BJData
         if (input_format == input_format_t::bjdata && size_and_type.first != npos && (size_and_type.second & (1 << 8)) != 0)
         {
             auto last_token = get_token_string();
@@ -12847,7 +12847,7 @@ unions members with complex constructors, see https://github.com/nlohmann/json/p
 */
 template<typename BasicJsonType> struct internal_iterator
 {
-    /// iterator for JSON objects
+    /// iterator for JSON m_objects
     typename BasicJsonType::object_t::iterator object_iterator {};
     /// iterator for JSON arrays
     typename BasicJsonType::array_t::iterator array_iterator {};
@@ -13336,7 +13336,7 @@ class iter_impl // NOLINT(cppcoreguidelines-special-member-functions,hicpp-speci
     template < typename IterImpl, detail::enable_if_t < (std::is_same<IterImpl, iter_impl>::value || std::is_same<IterImpl, other_iter_impl>::value), std::nullptr_t > = nullptr >
     bool operator==(const IterImpl& other) const
     {
-        // if objects are not the same, the comparison is undefined
+        // if m_objects are not the same, the comparison is undefined
         if (JSON_HEDLEY_UNLIKELY(m_object != other.m_object))
         {
             JSON_THROW(invalid_iterator::create(212, "cannot compare iterators of different containers", m_object));
@@ -13381,7 +13381,7 @@ class iter_impl // NOLINT(cppcoreguidelines-special-member-functions,hicpp-speci
     */
     bool operator<(const iter_impl& other) const
     {
-        // if objects are not the same, the comparison is undefined
+        // if m_objects are not the same, the comparison is undefined
         if (JSON_HEDLEY_UNLIKELY(m_object != other.m_object))
         {
             JSON_THROW(invalid_iterator::create(212, "cannot compare iterators of different containers", m_object));
@@ -14160,7 +14160,7 @@ class json_pointer
     {
         for (const auto& reference_token : reference_tokens)
         {
-            // convert null values to arrays or objects before continuing
+            // convert null values to arrays or m_objects before continuing
             if (ptr->is_null())
             {
                 // check if reference token is a number
@@ -14534,7 +14534,7 @@ class json_pointer
     @param[in] value             the value to consider
     @param[in,out] result        the result object to insert values to
 
-    @note Empty objects or arrays are flattened to `null`.
+    @note Empty m_objects or arrays are flattened to `null`.
     */
     template<typename BasicJsonType>
     static void flatten(const string_t& reference_string,
@@ -14613,7 +14613,7 @@ class json_pointer
     {
         if (JSON_HEDLEY_UNLIKELY(!value.is_object()))
         {
-            JSON_THROW(detail::type_error::create(314, "only objects can be unflattened", &value));
+            JSON_THROW(detail::type_error::create(314, "only m_objects can be unflattened", &value));
         }
 
         BasicJsonType result;
@@ -18095,13 +18095,13 @@ class serializer
 
     This function is called by the public member function dump and organizes
     the serialization internally. The indentation level is propagated as
-    additional parameter. In case of arrays and objects, the function is
+    additional parameter. In case of arrays and m_objects, the function is
     called recursively.
 
     - strings and object keys are escaped using `escape_string()`
     - integer numbers are converted implicitly via `operator<<`
     - floating-point numbers are converted to a string using `"%g"` format
-    - binary values are serialized as objects containing the subtype and the
+    - binary values are serialized as m_objects containing the subtype and the
       byte array
 
     @param[in] val               value to serialize
@@ -19716,7 +19716,7 @@ class basic_json // NOLINT(cppcoreguidelines-special-member-functions,hicpp-spec
     binary    | binary          | pointer to @ref binary_t
     null      | null            | *no value is stored*
 
-    @note Variable-length types (objects, arrays, and strings) are stored as
+    @note Variable-length types (m_objects, arrays, and strings) are stored as
     pointers. The size of the union should not exceed 64 bits if the default
     value types are used.
 
@@ -19829,10 +19829,10 @@ class basic_json // NOLINT(cppcoreguidelines-special-member-functions,hicpp-spec
         /// constructor for rvalue strings
         json_value(string_t&& value) : string(create<string_t>(std::move(value))) {}
 
-        /// constructor for objects
+        /// constructor for m_objects
         json_value(const object_t& value) : object(create<object_t>(value)) {}
 
-        /// constructor for rvalue objects
+        /// constructor for rvalue m_objects
         json_value(object_t&& value) : object(create<object_t>(std::move(value))) {}
 
         /// constructor for arrays
@@ -19967,18 +19967,18 @@ class basic_json // NOLINT(cppcoreguidelines-special-member-functions,hicpp-spec
     @brief checks the class invariants
 
     This function asserts the class invariants. It needs to be called at the
-    end of every constructor to make sure that created objects respect the
+    end of every constructor to make sure that created m_objects respect the
     invariant. Furthermore, it has to be called each time the type of a JSON
     value is changed, because the invariant expresses a relationship between
     @a m_type and @a m_value.
 
-    Furthermore, the parent relation is checked for arrays and objects: If
+    Furthermore, the parent relation is checked for arrays and m_objects: If
     @a check_parents true and the value is an array or object, then the
     container's elements must have the current value as parent.
 
     @param[in] check_parents  whether the parent relation should be checked.
                The value is true by default and should only be set to false
-               during destruction of objects when the invariant does not
+               during destruction of m_objects when the invariant does not
                need to hold.
     */
     void assert_invariant(bool check_parents = true) const noexcept
@@ -20109,7 +20109,7 @@ class basic_json // NOLINT(cppcoreguidelines-special-member-functions,hicpp-spec
 
     /// @name constructors and destructors
     /// Constructors of class @ref basic_json, copy/move constructor, copy
-    /// assignment, static functions creating objects, and the destructor.
+    /// assignment, static functions creating m_objects, and the destructor.
     /// @{
 
     /// @brief create an empty value with a given type
@@ -21285,7 +21285,7 @@ class basic_json // NOLINT(cppcoreguidelines-special-member-functions,hicpp-spec
     /// @sa https://json.nlohmann.me/api/basic_json/at/
     reference at(const typename object_t::key_type& key)
     {
-        // at only works for objects
+        // at only works for m_objects
         if (JSON_HEDLEY_UNLIKELY(!is_object()))
         {
             JSON_THROW(type_error::create(304, detail::concat("cannot use at() with ", type_name()), this));
@@ -21305,7 +21305,7 @@ class basic_json // NOLINT(cppcoreguidelines-special-member-functions,hicpp-spec
                  detail::is_usable_as_basic_json_key_type<basic_json_t, KeyType>::value, int> = 0>
     reference at(KeyType && key)
     {
-        // at only works for objects
+        // at only works for m_objects
         if (JSON_HEDLEY_UNLIKELY(!is_object()))
         {
             JSON_THROW(type_error::create(304, detail::concat("cannot use at() with ", type_name()), this));
@@ -21323,7 +21323,7 @@ class basic_json // NOLINT(cppcoreguidelines-special-member-functions,hicpp-spec
     /// @sa https://json.nlohmann.me/api/basic_json/at/
     const_reference at(const typename object_t::key_type& key) const
     {
-        // at only works for objects
+        // at only works for m_objects
         if (JSON_HEDLEY_UNLIKELY(!is_object()))
         {
             JSON_THROW(type_error::create(304, detail::concat("cannot use at() with ", type_name()), this));
@@ -21343,7 +21343,7 @@ class basic_json // NOLINT(cppcoreguidelines-special-member-functions,hicpp-spec
                  detail::is_usable_as_basic_json_key_type<basic_json_t, KeyType>::value, int> = 0>
     const_reference at(KeyType && key) const
     {
-        // at only works for objects
+        // at only works for m_objects
         if (JSON_HEDLEY_UNLIKELY(!is_object()))
         {
             JSON_THROW(type_error::create(304, detail::concat("cannot use at() with ", type_name()), this));
@@ -21428,7 +21428,7 @@ class basic_json // NOLINT(cppcoreguidelines-special-member-functions,hicpp-spec
             assert_invariant();
         }
 
-        // operator[] only works for objects
+        // operator[] only works for m_objects
         if (JSON_HEDLEY_LIKELY(is_object()))
         {
             auto result = m_data.m_value.object->emplace(std::move(key), nullptr);
@@ -21442,7 +21442,7 @@ class basic_json // NOLINT(cppcoreguidelines-special-member-functions,hicpp-spec
     /// @sa https://json.nlohmann.me/api/basic_json/operator%5B%5D/
     const_reference operator[](const typename object_t::key_type& key) const
     {
-        // const operator[] only works for objects
+        // const operator[] only works for m_objects
         if (JSON_HEDLEY_LIKELY(is_object()))
         {
             auto it = m_data.m_value.object->find(key);
@@ -21481,7 +21481,7 @@ class basic_json // NOLINT(cppcoreguidelines-special-member-functions,hicpp-spec
             assert_invariant();
         }
 
-        // operator[] only works for objects
+        // operator[] only works for m_objects
         if (JSON_HEDLEY_LIKELY(is_object()))
         {
             auto result = m_data.m_value.object->emplace(std::forward<KeyType>(key), nullptr);
@@ -21497,7 +21497,7 @@ class basic_json // NOLINT(cppcoreguidelines-special-member-functions,hicpp-spec
                  detail::is_usable_as_basic_json_key_type<basic_json_t, KeyType>::value, int > = 0 >
     const_reference operator[](KeyType && key) const
     {
-        // const operator[] only works for objects
+        // const operator[] only works for m_objects
         if (JSON_HEDLEY_LIKELY(is_object()))
         {
             auto it = m_data.m_value.object->find(std::forward<KeyType>(key));
@@ -21527,7 +21527,7 @@ class basic_json // NOLINT(cppcoreguidelines-special-member-functions,hicpp-spec
                    && !std::is_same<value_t, detail::uncvref_t<ValueType>>::value, int > = 0 >
     ValueType value(const typename object_t::key_type& key, const ValueType& default_value) const
     {
-        // value only works for objects
+        // value only works for m_objects
         if (JSON_HEDLEY_LIKELY(is_object()))
         {
             // if key is found, return value and given default value otherwise
@@ -21552,7 +21552,7 @@ class basic_json // NOLINT(cppcoreguidelines-special-member-functions,hicpp-spec
                    && !std::is_same<value_t, detail::uncvref_t<ValueType>>::value, int > = 0 >
     ReturnType value(const typename object_t::key_type& key, ValueType && default_value) const
     {
-        // value only works for objects
+        // value only works for m_objects
         if (JSON_HEDLEY_LIKELY(is_object()))
         {
             // if key is found, return value and given default value otherwise
@@ -21578,7 +21578,7 @@ class basic_json // NOLINT(cppcoreguidelines-special-member-functions,hicpp-spec
                    && !std::is_same<value_t, detail::uncvref_t<ValueType>>::value, int > = 0 >
     ValueType value(KeyType && key, const ValueType& default_value) const
     {
-        // value only works for objects
+        // value only works for m_objects
         if (JSON_HEDLEY_LIKELY(is_object()))
         {
             // if key is found, return value and given default value otherwise
@@ -21605,7 +21605,7 @@ class basic_json // NOLINT(cppcoreguidelines-special-member-functions,hicpp-spec
                    && !std::is_same<value_t, detail::uncvref_t<ValueType>>::value, int > = 0 >
     ReturnType value(KeyType && key, ValueType && default_value) const
     {
-        // value only works for objects
+        // value only works for m_objects
         if (JSON_HEDLEY_LIKELY(is_object()))
         {
             // if key is found, return value and given default value otherwise
@@ -21628,7 +21628,7 @@ class basic_json // NOLINT(cppcoreguidelines-special-member-functions,hicpp-spec
                    && !std::is_same<value_t, detail::uncvref_t<ValueType>>::value, int > = 0 >
     ValueType value(const json_pointer& ptr, const ValueType& default_value) const
     {
-        // value only works for objects
+        // value only works for m_objects
         if (JSON_HEDLEY_LIKELY(is_object()))
         {
             // if pointer resolves a value, return it or use default value
@@ -21653,7 +21653,7 @@ class basic_json // NOLINT(cppcoreguidelines-special-member-functions,hicpp-spec
                    && !std::is_same<value_t, detail::uncvref_t<ValueType>>::value, int > = 0 >
     ReturnType value(const json_pointer& ptr, ValueType && default_value) const
     {
-        // value only works for objects
+        // value only works for m_objects
         if (JSON_HEDLEY_LIKELY(is_object()))
         {
             // if pointer resolves a value, return it or use default value
@@ -21871,7 +21871,7 @@ class basic_json // NOLINT(cppcoreguidelines-special-member-functions,hicpp-spec
                    detail::has_erase_with_key_type<basic_json_t, KeyType>::value, int > = 0 >
     size_type erase_internal(KeyType && key)
     {
-        // this erase only works for objects
+        // this erase only works for m_objects
         if (JSON_HEDLEY_UNLIKELY(!is_object()))
         {
             JSON_THROW(type_error::create(307, detail::concat("cannot use erase() with ", type_name()), this));
@@ -21884,7 +21884,7 @@ class basic_json // NOLINT(cppcoreguidelines-special-member-functions,hicpp-spec
                    !detail::has_erase_with_key_type<basic_json_t, KeyType>::value, int > = 0 >
     size_type erase_internal(KeyType && key)
     {
-        // this erase only works for objects
+        // this erase only works for m_objects
         if (JSON_HEDLEY_UNLIKELY(!is_object()))
         {
             JSON_THROW(type_error::create(307, detail::concat("cannot use erase() with ", type_name()), this));
@@ -22389,7 +22389,7 @@ class basic_json // NOLINT(cppcoreguidelines-special-member-functions,hicpp-spec
     /// @sa https://json.nlohmann.me/api/basic_json/push_back/
     void push_back(basic_json&& val)
     {
-        // push_back only works for null objects or arrays
+        // push_back only works for null m_objects or arrays
         if (JSON_HEDLEY_UNLIKELY(!(is_null() || is_array())))
         {
             JSON_THROW(type_error::create(308, detail::concat("cannot use push_back() with ", type_name()), this));
@@ -22422,7 +22422,7 @@ class basic_json // NOLINT(cppcoreguidelines-special-member-functions,hicpp-spec
     /// @sa https://json.nlohmann.me/api/basic_json/push_back/
     void push_back(const basic_json& val)
     {
-        // push_back only works for null objects or arrays
+        // push_back only works for null m_objects or arrays
         if (JSON_HEDLEY_UNLIKELY(!(is_null() || is_array())))
         {
             JSON_THROW(type_error::create(308, detail::concat("cannot use push_back() with ", type_name()), this));
@@ -22454,7 +22454,7 @@ class basic_json // NOLINT(cppcoreguidelines-special-member-functions,hicpp-spec
     /// @sa https://json.nlohmann.me/api/basic_json/push_back/
     void push_back(const typename object_t::value_type& val)
     {
-        // push_back only works for null objects or objects
+        // push_back only works for null m_objects or m_objects
         if (JSON_HEDLEY_UNLIKELY(!(is_null() || is_object())))
         {
             JSON_THROW(type_error::create(308, detail::concat("cannot use push_back() with ", type_name()), this));
@@ -22510,7 +22510,7 @@ class basic_json // NOLINT(cppcoreguidelines-special-member-functions,hicpp-spec
     template<class... Args>
     reference emplace_back(Args&& ... args)
     {
-        // emplace_back only works for null objects or arrays
+        // emplace_back only works for null m_objects or arrays
         if (JSON_HEDLEY_UNLIKELY(!(is_null() || is_array())))
         {
             JSON_THROW(type_error::create(311, detail::concat("cannot use emplace_back() with ", type_name()), this));
@@ -22535,7 +22535,7 @@ class basic_json // NOLINT(cppcoreguidelines-special-member-functions,hicpp-spec
     template<class... Args>
     std::pair<iterator, bool> emplace(Args&& ... args)
     {
-        // emplace only works for null objects or arrays
+        // emplace only works for null m_objects or arrays
         if (JSON_HEDLEY_UNLIKELY(!(is_null() || is_object())))
         {
             JSON_THROW(type_error::create(311, detail::concat("cannot use emplace() with ", type_name()), this));
@@ -22684,7 +22684,7 @@ class basic_json // NOLINT(cppcoreguidelines-special-member-functions,hicpp-spec
     /// @sa https://json.nlohmann.me/api/basic_json/insert/
     void insert(const_iterator first, const_iterator last)
     {
-        // insert only works for objects
+        // insert only works for m_objects
         if (JSON_HEDLEY_UNLIKELY(!is_object()))
         {
             JSON_THROW(type_error::create(309, detail::concat("cannot use insert() with ", type_name()), this));
@@ -22696,10 +22696,10 @@ class basic_json // NOLINT(cppcoreguidelines-special-member-functions,hicpp-spec
             JSON_THROW(invalid_iterator::create(210, "iterators do not fit", this));
         }
 
-        // passed iterators must belong to objects
+        // passed iterators must belong to m_objects
         if (JSON_HEDLEY_UNLIKELY(!first.m_object->is_object()))
         {
-            JSON_THROW(invalid_iterator::create(202, "iterators first and last must point to objects", this));
+            JSON_THROW(invalid_iterator::create(202, "iterators first and last must point to m_objects", this));
         }
 
         m_data.m_value.object->insert(first.m_it.object_iterator, last.m_it.object_iterator);
@@ -22735,7 +22735,7 @@ class basic_json // NOLINT(cppcoreguidelines-special-member-functions,hicpp-spec
             JSON_THROW(invalid_iterator::create(210, "iterators do not fit", this));
         }
 
-        // passed iterators must belong to objects
+        // passed iterators must belong to m_objects
         if (JSON_HEDLEY_UNLIKELY(!first.m_object->is_object()))
         {
             JSON_THROW(type_error::create(312, detail::concat("cannot use update() with ", first.m_object->type_name()), first.m_object));
@@ -22808,7 +22808,7 @@ class basic_json // NOLINT(cppcoreguidelines-special-member-functions,hicpp-spec
     /// @sa https://json.nlohmann.me/api/basic_json/swap/
     void swap(object_t& other) // NOLINT(bugprone-exception-escape,cppcoreguidelines-noexcept-swap,performance-noexcept-swap)
     {
-        // swap only works for objects
+        // swap only works for m_objects
         if (JSON_HEDLEY_LIKELY(is_object()))
         {
             using std::swap;
@@ -24134,7 +24134,7 @@ class basic_json // NOLINT(cppcoreguidelines-special-member-functions,hicpp-spec
         // type check: top level value must be an array
         if (JSON_HEDLEY_UNLIKELY(!json_patch.is_array()))
         {
-            JSON_THROW(parse_error::create(104, 0, "JSON patch must be an array of objects", &json_patch));
+            JSON_THROW(parse_error::create(104, 0, "JSON patch must be an array of m_objects", &json_patch));
         }
 
         // iterate and apply the operations
@@ -24172,7 +24172,7 @@ class basic_json // NOLINT(cppcoreguidelines-special-member-functions,hicpp-spec
             // type check: every element of the array must be an object
             if (JSON_HEDLEY_UNLIKELY(!val.is_object()))
             {
-                JSON_THROW(parse_error::create(104, 0, "JSON patch must be an array of objects", &val));
+                JSON_THROW(parse_error::create(104, 0, "JSON patch must be an array of m_objects", &val));
             }
 
             // collect mandatory members
@@ -24498,7 +24498,7 @@ NLOHMANN_JSON_NAMESPACE_END
 namespace std // NOLINT(cert-dcl58-cpp)
 {
 
-/// @brief hash value for JSON objects
+/// @brief hash value for JSON m_objects
 /// @sa https://json.nlohmann.me/api/basic_json/std_hash/
 NLOHMANN_BASIC_JSON_TPL_DECLARATION
 struct hash<nlohmann::NLOHMANN_BASIC_JSON_TPL> // NOLINT(cert-dcl58-cpp)
@@ -24531,7 +24531,7 @@ struct less< ::nlohmann::detail::value_t> // do not remove the space after '<', 
 // C++20 prohibit function specialization in the std namespace.
 #ifndef JSON_HAS_CPP_20
 
-/// @brief exchanges the values of two JSON objects
+/// @brief exchanges the values of two JSON m_objects
 /// @sa https://json.nlohmann.me/api/basic_json/std_swap/
 NLOHMANN_BASIC_JSON_TPL_DECLARATION
 inline void swap(nlohmann::NLOHMANN_BASIC_JSON_TPL& j1, nlohmann::NLOHMANN_BASIC_JSON_TPL& j2) noexcept(  // NOLINT(readability-inconsistent-declaration-parameter-name, cert-dcl58-cpp)
