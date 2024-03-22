@@ -82,8 +82,8 @@ Matrix4 Matrix4::RotateX(const f32 angle)
 	f32 radc = cos(rad);
 	f32 rads = sin(rad);
 	tmp.m_data[1][1] = radc;
-	tmp.m_data[1][2] = -rads;
-	tmp.m_data[2][1] = rads;
+	tmp.m_data[1][2] = rads;
+	tmp.m_data[2][1] = -rads;
 	tmp.m_data[2][2] = radc;
 	return tmp;
 }
@@ -95,8 +95,8 @@ Matrix4 Matrix4::RotateY(const f32 angle)
 	f32 radc = cos(rad);
 	f32 rads = sin(rad);
 	tmp.m_data[0][0] = radc;
-	tmp.m_data[0][2] = rads;
-	tmp.m_data[2][0] = -rads;
+	tmp.m_data[0][2] = -rads;
+	tmp.m_data[2][0] = rads;
 	tmp.m_data[2][2] = radc;
 	return tmp;
 }
@@ -108,8 +108,8 @@ Matrix4 Matrix4::RotateZ(const f32 angle)
 	f32 radc = cos(rad);
 	f32 rads = sin(rad);
 	tmp.m_data[0][0] = radc;
-	tmp.m_data[0][1] = -rads;
-	tmp.m_data[1][0] = rads;
+	tmp.m_data[0][1] = rads;
+	tmp.m_data[1][0] = -rads;
 	tmp.m_data[1][1] = radc;
 	return tmp;
 }

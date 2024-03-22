@@ -1,6 +1,6 @@
 #include "Geometry/Sphere.h"
 
-void Sphere::intersect(Ray ray, Hit& hit, f32 tmin, f32 tmax) const {
+bool Sphere::intersect(Ray ray, Hit& hit, f32 tmin, f32 tmax) const {
     Vector4 offset = ray.m_origin - m_center;
     f32 a = ray.m_direction.dot(ray.m_direction);
     f32 b = 2.0f * offset.dot(ray.m_direction);
@@ -9,7 +9,7 @@ void Sphere::intersect(Ray ray, Hit& hit, f32 tmin, f32 tmax) const {
 
     /* if discriminant is less than 0, ray didn't hit object, so do nothing */
     if(discriminant < 0.0f) {
-        return;
+        return false;
     }
 
     //TODO
@@ -30,17 +30,18 @@ void Sphere::intersect(Ray ray, Hit& hit, f32 tmin, f32 tmax) const {
     else if(t1 < 0 && t0 > 0)
         t = t0;
     else
-        return;
+        return false;
 
 
     /* if t-distance inside hit is smaller than current hit distance, do nothing */
     /* also discard when hit is outside the frustum ( < near && > far ) */
     if(hit.get_t() < t || t < tmin || t > tmax){
-        return;
+        return false;
     }
 
     hit.set_t(t);
     hit.set_color(m_color);
     hit.set_normal((ray.m_origin + ray.m_direction * t) - m_center);
     hit.m_normal.normalize();
+    return true;
 }

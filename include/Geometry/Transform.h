@@ -11,10 +11,10 @@ public:
         m_object = object;
     }
     ~Transform() override = default;
-    void intersect(Ray ray, Hit& hit, f32 tmin, f32 tmax) const override;
+    bool intersect(Ray ray, Hit& hit, f32 tmin, f32 tmax) const override;
     void id() override {std::cout<<"Transform\n";};
 
-    Matrix4 m_transform;
+    Matrix4 m_transform = Matrix4();
+    Matrix4 m_transform_normal = Matrix4();
     std::shared_ptr<Object3D> m_object;
-
 };

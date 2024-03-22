@@ -10,7 +10,7 @@ public:
     Object3D() = default;
     virtual ~Object3D() = default;
 
-    virtual void intersect(Ray ray, Hit& hit, f32 tmin, f32 tmax) const = 0;
+    virtual bool intersect(Ray ray, Hit& hit, f32 tmin, f32 tmax) const = 0;
     virtual void id() = 0;
 
     void set_color(const f32 newColor[]) { m_color.set_r(newColor[0]); m_color.set_g(newColor[1]); m_color.set_b(newColor[2]);}

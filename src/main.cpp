@@ -39,6 +39,8 @@ int main() {
     std::string file3 = "scene3_perspective";
     std::string file4 = "scene4_plane";
     std::string file5 = "scene5_sphere_triangle";
+    std::string file6 = "scene6_squashed_sphere";
+    std::string file7 = "scene7_squashed_rotated_sphere";
 
     /* Construct necessary m_objects */
     std::shared_ptr<Camera> camera_ptr;
@@ -50,6 +52,7 @@ int main() {
     Timer timer;
 
     /* init m_objects and render scenes */
+
     init(renderer, camera_ptr, scene, light, file1);
     renderer.Render(file1, camera_ptr, scene, light, 2, 40, true);
 
@@ -64,6 +67,12 @@ int main() {
 
     init(renderer, camera_ptr, scene, light, file5);
     renderer.Render(file5, camera_ptr, scene, light, 2, 40, true);
+
+    init(renderer, camera_ptr, scene, light, file6);
+    renderer.Render(file6, camera_ptr, scene, light, 2, 40, true);
+
+    init(renderer, camera_ptr, scene, light, file7);
+    renderer.Render(file7, camera_ptr, scene, light, 2, 40, true);
 
     std::cout << "STOPPING GLOBAL TIMER!!!" << std::endl;
     timer.Stop();
@@ -320,6 +329,8 @@ void collectScene(const json &data, Group &scene) {
                                                                                             {v2_buf[0], v2_buf[1], v2_buf[2]},
                                                                                             {v3_buf[0], v3_buf[1], v3_buf[2]}));
                         tr0->set_color(buffer);
+                        Vector4 normal0 = {tr0->m_v2.cross_zero(tr0->m_v3)};
+                        tr0->m_normal = {normal0.get_x(), normal0.get_y(), normal0.get_z()};
                         scene.m_objects.push_back(tr0);
 
                     }
@@ -350,6 +361,168 @@ void collectScene(const json &data, Group &scene) {
                         p0->m_d = stof(d);
                         p0->m_normal = {v1_buf[0], v1_buf[1], v1_buf[2]};
                         scene.m_objects.push_back(p0);
+
+                    }
+
+                    if(n.contains("transform")){
+                        //std::cout << n << "\n";
+                        std::shared_ptr<Transform> t0 = std::make_shared<Transform>(Transform());
+                        auto const& transform = n.find("transform");
+                        if(transform->contains("transformations")) {
+                            auto const& transformations0 = transform->find("transformations");
+                            //std::cout << *transformations0 << "\n";
+                            for(auto const& transformations: *transformations0) {
+                                if(transformations.contains("translate")) {
+                                    auto const& translate = transformations.find("translate");
+                                    index = 0;
+                                    for(auto const& p : *translate){
+                                        buffer[index++] = p;
+                                    }
+                                    Matrix4 t = Matrix4::Translate(buffer[0], buffer[1], buffer[2]);
+                                    t0->m_transform = t0->m_transform.mult(t);
+                                }
+
+                                if(transformations.contains("zrotate")) {
+                                    auto const &zrotate = transformations.find("zrotate");
+                                    auto z = zrotate->dump();
+                                    Matrix4 t = Matrix4::RotateZ(stof(z));
+                                    t0->m_transform = t0->m_transform.mult(t);
+                                }
+
+                                if(transformations.contains("yrotate")) {
+                                    auto const &yrotate = transformations.find("yrotate");
+                                    auto y = yrotate->dump();
+                                    Matrix4 t = Matrix4::RotateY(stof(y));
+                                    t0->m_transform = t0->m_transform.mult(t);
+                                }
+
+                                if(transformations.contains("xrotate")) {
+                                    auto const& xrotate = transformations.find("xrotate");
+                                    auto x = xrotate->dump();
+                                    Matrix4 t = Matrix4::RotateX(stof(x));
+                                    t0->m_transform = t0->m_transform.mult(t);
+                                }
+
+                                if(transformations.contains("scale")) {
+                                    //std::cout <<"ype";
+                                    auto const& scale = transformations.find("scale");
+                                    index = 0;
+                                    for(auto const& p : *scale){
+                                        buffer[index++] = p;
+                                    }
+                                    Matrix4 t = Matrix4::Scale(buffer[0], buffer[1], buffer[2]);
+                                    t0->m_transform = t0->m_transform.mult(t);
+                                    //std::cout << *scale;
+                                }
+
+                                t0->m_transform = t0->m_transform.inverse();
+                                t0->m_transform_normal = t0->m_transform.transpose();
+
+                            }
+
+                        }
+
+                        if(transform->contains("object")){
+                            auto const& obj0 = transform->find("object");
+
+                            if(obj0->contains("sphere")){
+                                //std::cout << n << "\n";
+                                auto const& sphere = obj0->find("sphere");
+                                auto const& center = sphere->find("center");
+                                auto const& radius = sphere->find("radius");
+                                auto const& color = sphere->find("color");
+
+                                index = 0;
+                                for(auto const& p : *center){
+                                    buffer[index++] = p;
+                                }
+
+                                auto r = radius->dump();
+                                std::shared_ptr<Sphere> sp0 = std::make_shared<Sphere>(Sphere(stof(r), {buffer[0], buffer[1], buffer[2], 1.0}));
+
+                                index = 0;
+                                for(auto const& c : *color){
+                                    buffer[index++] = c;
+                                }
+
+                                sp0->set_color(buffer);
+                                t0->m_object = sp0;
+                            }
+
+                            if(obj0->contains("triangle")){
+                                //std::cout << n << "\n";
+                                auto const& triangle = obj0->find("triangle");
+                                auto const& v1 = triangle->find("v1");
+                                auto const& v2 = triangle->find("v2");
+                                auto const& v3 = triangle->find("v3");
+                                auto const& color = triangle->find("color");
+
+                                index = 0;
+                                for(auto const& p : *v1){
+                                    v1_buf[index++] = p;
+                                }
+
+                                index = 0;
+                                for(auto const& p : *v2){
+                                    v2_buf[index++] = p;
+                                }
+
+                                index = 0;
+                                for(auto const& p : *v3){
+                                    v3_buf[index++] = p;
+                                }
+
+                                index = 0;
+                                for(auto const& c : *color){
+                                    buffer[index++] = c;
+                                }
+
+                                //TODO
+                                // Make a shared_ptr<Triangle> and add it to scene vector
+                                std::shared_ptr<Triangle> tr0 = std::make_shared<Triangle>(Triangle({v1_buf[0], v1_buf[1], v1_buf[2]},
+                                                                                                    {v2_buf[0], v2_buf[1], v2_buf[2]},
+                                                                                                    {v3_buf[0], v3_buf[1], v3_buf[2]}));
+                                tr0->set_color(buffer);
+                                Vector4 normal0 = {tr0->m_v2.cross_zero(tr0->m_v3)};
+                                normal0 = t0->m_transform_normal.mult(normal0);
+                                tr0->m_normal = {normal0.get_x(), normal0.get_y(), normal0.get_z()};
+                                t0->m_object = tr0;
+
+                            }
+
+                            if(obj0->contains("plane")){
+                                //std::cout << n << "\n";
+                                auto const& plane = obj0->find("plane");
+                                auto const& normal = plane->find("normal");
+                                auto const& color = plane->find("color");
+                                auto const& offset = plane->find("offset");
+
+                                index = 0;
+                                for(auto const& p : *normal){
+                                    v1_buf[index++] = p;
+                                }
+
+                                index = 0;
+                                for(auto const& c : *color){
+                                    buffer[index++] = c;
+                                }
+
+                                auto d = offset->dump();
+
+                                //TODO
+                                // Make a shared_ptr<Plane> and add it to scene vector
+                                std::shared_ptr<Plane> p0 = std::make_shared<Plane>(Plane());
+                                p0->set_color(buffer);
+                                p0->m_d = stof(d);
+                                Vector4 normal0 = {v1_buf[0], v1_buf[1], v1_buf[2]};
+                                normal0 = t0->m_transform_normal.mult(normal0);
+                                p0->m_normal = {normal0.get_x(), normal0.get_y(), normal0.get_z()};
+                                t0->m_object = p0;
+
+                            }
+                        }
+
+                        scene.m_objects.push_back(t0);
 
                     }
                 }
