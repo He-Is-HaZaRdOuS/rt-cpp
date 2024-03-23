@@ -4,10 +4,10 @@
 
 #include "Geometry/Plane.h"
 
-bool Plane::intersect(Ray ray, Hit &hit, f32 tmin, f32 tmax) const {
-    Vector4 normal4 = Vector4(m_normal.get_x(), m_normal.get_y(), m_normal.get_z(), 1);
+bool Plane::intersect(const Ray ray, Hit &hit, const f32 tmin, const f32 tmax) const {
+    const Vector4 normal4 = Vector4(m_normal.get_x(), m_normal.get_y(), m_normal.get_z(), 1);
     //std::cout << "d: " << m_d << std::endl;
-    f32 t = -(ray.m_origin - m_d).dot(normal4) / ray.m_direction.dot(normal4);
+    const f32 t = -(ray.m_origin - m_d).dot(normal4) / ray.m_direction.dot(normal4);
 
 
 

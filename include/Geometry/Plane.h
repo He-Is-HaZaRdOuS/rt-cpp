@@ -1,3 +1,4 @@
+#pragma once
 #include <iostream>
 #include "Utilities/Macros.h"
 #include "Geometry/Object3D.h"
@@ -12,5 +13,5 @@ public:
     void id() override {std::cout<<"Plane\n";};
 
     Vector3 m_normal;
-    f32 m_d;
+    f32 m_d{};
 };

@@ -78,9 +78,9 @@ Matrix4 Matrix4::Scale(const f32 sx,const f32 sy,const f32 sz)
 Matrix4 Matrix4::RotateX(const f32 angle)
 {
 	Matrix4 tmp = Matrix4();
-	f32 rad = angle * M_PI / 180.0;
-	f32 radc = cos(rad);
-	f32 rads = sin(rad);
+	const f32 rad = static_cast<f32>(angle * M_PI / 180.0);
+	const f32 radc = static_cast<f32>(cos(rad));
+	const f32 rads = static_cast<f32>(sin(rad));
 	tmp.m_data[1][1] = radc;
 	tmp.m_data[1][2] = rads;
 	tmp.m_data[2][1] = -rads;
@@ -91,9 +91,9 @@ Matrix4 Matrix4::RotateX(const f32 angle)
 Matrix4 Matrix4::RotateY(const f32 angle)
 {
 	Matrix4 tmp = Matrix4();
-	f32 rad = angle * M_PI / 180.0;
-	f32 radc = cos(rad);
-	f32 rads = sin(rad);
+	const f32 rad = static_cast<f32>(angle * M_PI / 180.0);
+	const f32 radc = static_cast<f32>(cos(rad));
+	const f32 rads = static_cast<f32>(sin(rad));
 	tmp.m_data[0][0] = radc;
 	tmp.m_data[0][2] = -rads;
 	tmp.m_data[2][0] = rads;
@@ -104,9 +104,9 @@ Matrix4 Matrix4::RotateY(const f32 angle)
 Matrix4 Matrix4::RotateZ(const f32 angle)
 {
 	Matrix4 tmp = Matrix4();
-	f32 rad = angle * M_PI / 180.0;
-	f32 radc = cos(rad);
-	f32 rads = sin(rad);
+	const f32 rad = static_cast<f32>(angle * M_PI / 180.0);
+	const f32 radc = static_cast<f32>(cos(rad));
+	const f32 rads = static_cast<f32>(sin(rad));
 	tmp.m_data[0][0] = radc;
 	tmp.m_data[0][1] = rads;
 	tmp.m_data[1][0] = -rads;
@@ -117,12 +117,12 @@ Matrix4 Matrix4::RotateZ(const f32 angle)
 Matrix4 Matrix4::Rotate(f32 x, f32 y, f32 z, const f32 angle)
 {
 	Matrix4 tmp = Matrix4();
-	const f32 rad = angle * M_PI / 180.0;
-	const f32 radc = cos(rad);
-	const f32 rads = sin(rad);
-	const f32 t = 1.0 - radc;
+	const f32 rad = static_cast<f32>(angle * M_PI / 180.0);
+	const f32 radc = static_cast<f32>(cos(rad));
+	const f32 rads = static_cast<f32>(sin(rad));
+	const f32 t = static_cast<f32>(1.0 - radc);
 
-	const f32 normalizer = 1.0 / sqrt(x * x + y * y + z * z);
+	const f32 normalizer = static_cast<f32>(1.0 / sqrt(x * x + y * y + z * z));
 	x = x * normalizer;
 	y = y * normalizer;
 	z = z / normalizer;
@@ -230,71 +230,71 @@ Vector4 operator*(const Matrix4& self, const Vector4& other)
 }
 
 Matrix4 Matrix4::inverse() const {
-    f32 detr = det();
+	const f32 detr = det();
 
     Matrix4 tmp = Matrix4();
 
-    Matrix3 m00 = Matrix3(m_data[1][1], m_data[1][2], m_data[1][3],
-                          m_data[2][1], m_data[2][2], m_data[2][3],
-                          m_data[3][1], m_data[3][2], m_data[3][3]);
+	const Matrix3 m00 = Matrix3(m_data[1][1], m_data[1][2], m_data[1][3],
+	                            m_data[2][1], m_data[2][2], m_data[2][3],
+	                            m_data[3][1], m_data[3][2], m_data[3][3]);
 
-    Matrix3 m01 = Matrix3(m_data[1][0], m_data[1][2], m_data[1][3],
-                          m_data[2][0], m_data[2][2], m_data[2][3],
-                          m_data[3][0], m_data[3][2], m_data[3][3]);
+	const Matrix3 m01 = Matrix3(m_data[1][0], m_data[1][2], m_data[1][3],
+	                            m_data[2][0], m_data[2][2], m_data[2][3],
+	                            m_data[3][0], m_data[3][2], m_data[3][3]);
 
-    Matrix3 m02 = Matrix3(m_data[1][0], m_data[1][1], m_data[1][3],
-                          m_data[2][0], m_data[2][1], m_data[2][3],
-                          m_data[3][0], m_data[3][1], m_data[3][3]);
+	const Matrix3 m02 = Matrix3(m_data[1][0], m_data[1][1], m_data[1][3],
+	                            m_data[2][0], m_data[2][1], m_data[2][3],
+	                            m_data[3][0], m_data[3][1], m_data[3][3]);
 
-    Matrix3 m03 = Matrix3(m_data[1][0], m_data[1][1], m_data[1][2],
+    const Matrix3 m03 = Matrix3(m_data[1][0], m_data[1][1], m_data[1][2],
                           m_data[2][0], m_data[2][1], m_data[2][2],
                           m_data[3][0], m_data[3][1], m_data[3][2]);
 
-    Matrix3 m10 = Matrix3(m_data[0][1], m_data[0][2], m_data[0][3],
+    const Matrix3 m10 = Matrix3(m_data[0][1], m_data[0][2], m_data[0][3],
                           m_data[2][1], m_data[2][2], m_data[2][3],
                           m_data[3][1], m_data[3][2], m_data[3][3]);
 
-    Matrix3 m11 = Matrix3(m_data[0][0], m_data[0][2], m_data[0][3],
+    const Matrix3 m11 = Matrix3(m_data[0][0], m_data[0][2], m_data[0][3],
                           m_data[2][0], m_data[2][2], m_data[2][3],
                           m_data[3][0], m_data[3][2], m_data[3][3]);
 
-    Matrix3 m12 = Matrix3(m_data[0][0], m_data[0][1], m_data[0][3],
+    const Matrix3 m12 = Matrix3(m_data[0][0], m_data[0][1], m_data[0][3],
                           m_data[2][0], m_data[2][1], m_data[2][3],
                           m_data[3][0], m_data[3][1], m_data[3][3]);
 
-    Matrix3 m13 = Matrix3(m_data[0][0], m_data[0][1], m_data[0][2],
+    const Matrix3 m13 = Matrix3(m_data[0][0], m_data[0][1], m_data[0][2],
                           m_data[2][0], m_data[2][1], m_data[2][2],
                           m_data[3][0], m_data[3][1], m_data[3][2]);
 
-    Matrix3 m20 = Matrix3(m_data[0][1], m_data[0][2], m_data[0][3],
+    const Matrix3 m20 = Matrix3(m_data[0][1], m_data[0][2], m_data[0][3],
                           m_data[1][1], m_data[1][2], m_data[1][3],
                           m_data[3][1], m_data[3][2], m_data[3][3]);
 
-    Matrix3 m21 = Matrix3(m_data[0][0], m_data[0][2], m_data[0][3],
+    const Matrix3 m21 = Matrix3(m_data[0][0], m_data[0][2], m_data[0][3],
                           m_data[1][0], m_data[1][2], m_data[1][3],
                           m_data[3][0], m_data[3][2], m_data[3][3]);
 
-    Matrix3 m22 = Matrix3(m_data[0][0], m_data[0][1], m_data[0][3],
+    const Matrix3 m22 = Matrix3(m_data[0][0], m_data[0][1], m_data[0][3],
                           m_data[1][0], m_data[1][1], m_data[1][3],
                           m_data[3][0], m_data[3][1], m_data[3][3]);
 
-    Matrix3 m23 = Matrix3(m_data[0][0], m_data[0][1], m_data[0][2],
+    const Matrix3 m23 = Matrix3(m_data[0][0], m_data[0][1], m_data[0][2],
                           m_data[1][0], m_data[1][1], m_data[1][2],
                           m_data[3][0], m_data[3][1], m_data[3][2]);
 
-    Matrix3 m30 = Matrix3(m_data[0][1], m_data[0][2], m_data[0][3],
+    const Matrix3 m30 = Matrix3(m_data[0][1], m_data[0][2], m_data[0][3],
                           m_data[1][1], m_data[1][2], m_data[1][3],
                           m_data[2][1], m_data[2][2], m_data[2][3]);
 
-    Matrix3 m31 = Matrix3(m_data[0][0], m_data[0][2], m_data[0][3],
+    const Matrix3 m31 = Matrix3(m_data[0][0], m_data[0][2], m_data[0][3],
                           m_data[1][0], m_data[1][2], m_data[1][3],
                           m_data[2][0], m_data[2][2], m_data[2][3]);
 
-    Matrix3 m32 = Matrix3(m_data[0][0], m_data[0][1], m_data[0][3],
+    const Matrix3 m32 = Matrix3(m_data[0][0], m_data[0][1], m_data[0][3],
                           m_data[1][0], m_data[1][1], m_data[1][3],
                           m_data[2][0], m_data[2][1], m_data[2][3]);
 
-    Matrix3 m33 = Matrix3(m_data[0][0], m_data[0][1], m_data[0][2],
+    const Matrix3 m33 = Matrix3(m_data[0][0], m_data[0][1], m_data[0][2],
                           m_data[1][0], m_data[1][1], m_data[1][2],
                           m_data[2][0], m_data[2][1], m_data[2][2]);
 

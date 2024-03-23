@@ -37,7 +37,7 @@ Vector4 Vector4::Zero()
 }
 
 f32 Vector4::magnitude() const {
-	return sqrt(m_data[0] * m_data[0] + m_data[1] * m_data[1] + m_data[2] * m_data[2]);
+	return static_cast<f32>(sqrt(m_data[0] * m_data[0] + m_data[1] * m_data[1] + m_data[2] * m_data[2]));
 }
 
 f32 Vector4::dot(const Vector4& other) const {

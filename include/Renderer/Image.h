@@ -10,7 +10,7 @@ public:
 
     void init(const Vector3& base_color);
     void set_pixel(u32 x, u32 y, u32 color);
-    u32 get_pixel(u32 x, u32 y);
+    [[nodiscard]] u32 get_pixel(u32 x, u32 y) const;
 
     u32 m_width;
     u32 m_height;

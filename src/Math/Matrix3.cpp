@@ -18,7 +18,7 @@ Matrix3::Matrix3(const Matrix3 &other) {
     memcpy(m_data, other.m_data, sizeof(m_data));
 }
 
-Matrix3::Matrix3(f32 f1, f32 f2, f32 f3, f32 f4, f32 f5, f32 f6, f32 f7, f32 f8, f32 f9) {
+Matrix3::Matrix3(const f32 f1, const f32 f2, const f32 f3, const f32 f4, const f32 f5, const f32 f6, const f32 f7, const f32 f8, const f32 f9) {
     m_data[0][0] = f1;
     m_data[1][0] = f2;
     m_data[2][0] = f3;
@@ -97,8 +97,8 @@ Vector3 operator*(const Matrix3& self, const Vector3& other)
 }
 
 Matrix3 Matrix3::inverse() const {
-    f32 detr = det();
-    f32 invdetr = 1 / detr;
+    const f32 detr = det();
+    const f32 invdetr = 1 / detr;
 
     Matrix3 tmp = Matrix3();
 

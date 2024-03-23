@@ -170,7 +170,7 @@ std::shared_ptr<Camera> collectCamera(const json &data) {
                 }
                 /* calculate horizontal vector */
                 perspcam_ptr->m_horizontal = perspcam_ptr->m_direction.cross_zero( perspcam_ptr->m_up);
-                perspcam_ptr->m_scale = (f32)tan((perspcam_ptr->m_angle) * (M_PI / 180));
+                perspcam_ptr->m_scale = static_cast<f32>(tan((perspcam_ptr->m_angle) * (M_PI / 180)));
 
                 return perspcam_ptr;
         }
@@ -255,7 +255,7 @@ Light collectLight(const json &data) {
             exit(1);
         }
     }
-
+    return Light{};
 }
 
 void collectScene(const json &data, Group &scene) {
@@ -484,7 +484,6 @@ void collectScene(const json &data, Group &scene) {
                                                                                                     {v3_buf[0], v3_buf[1], v3_buf[2]}));
                                 tr0->set_color(buffer);
                                 Vector4 normal0 = {tr0->m_v2.cross_zero(tr0->m_v3)};
-                                normal0 = t0->m_transform_normal.mult(normal0);
                                 tr0->m_normal = {normal0.get_x(), normal0.get_y(), normal0.get_z()};
                                 t0->m_object = tr0;
 
@@ -514,9 +513,7 @@ void collectScene(const json &data, Group &scene) {
                                 std::shared_ptr<Plane> p0 = std::make_shared<Plane>(Plane());
                                 p0->set_color(buffer);
                                 p0->m_d = stof(d);
-                                Vector4 normal0 = {v1_buf[0], v1_buf[1], v1_buf[2]};
-                                normal0 = t0->m_transform_normal.mult(normal0);
-                                p0->m_normal = {normal0.get_x(), normal0.get_y(), normal0.get_z()};
+                                p0->m_normal = {v1_buf[0], v1_buf[1], v1_buf[2]};
                                 t0->m_object = p0;
 
                             }
@@ -540,10 +537,6 @@ void collectScene(const json &data, Group &scene) {
 void init(Renderer& renderer, std::shared_ptr<Camera>& camera, Group& scene, Light &light, const std::string& path){
     std::ifstream f(RESOURCES_PATH + path + ".json");
     json data = json::parse(f);
-
-    u32 index;
-    f32 buffer[3];
-    f32 color_buf[3];
 
     camera = collectCamera(data);
     collectBackground(data, renderer);

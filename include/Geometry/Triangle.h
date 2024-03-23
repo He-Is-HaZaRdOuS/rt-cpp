@@ -1,3 +1,4 @@
+#pragma once
 #include <iostream>
 #include "Utilities/Macros.h"
 #include "Geometry/Object3D.h"

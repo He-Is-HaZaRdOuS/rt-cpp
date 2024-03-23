@@ -1,3 +1,4 @@
+#pragma once
 #include "Utilities/Macros.h"
 #include "Geometry/Object3D.h"
 #include "Math/Matrix4.h"

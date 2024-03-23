@@ -26,7 +26,7 @@ Vector3 Vector3::Zero()
 }
 
 f32 Vector3::magnitude() const {
-    return sqrt(m_data[0] * m_data[0] + m_data[1] * m_data[1] + m_data[2] * m_data[2]);
+    return static_cast<f32>(sqrt(m_data[0] * m_data[0] + m_data[1] * m_data[1] + m_data[2] * m_data[2]));
 }
 
 f32 Vector3::dot(const Vector3& other) const {

@@ -17,8 +17,8 @@ public:
 
     [[nodiscard]] Ray generateRay(f32 x, f32 y) const override;
 
-    f32 m_scale;
-    f32 m_angle;
+    f32 m_scale{};
+    f32 m_angle{};
     Vector4 m_center;
     Vector4 m_direction = Vector4::Zero();
     Vector4 m_up = Vector4::Zero();

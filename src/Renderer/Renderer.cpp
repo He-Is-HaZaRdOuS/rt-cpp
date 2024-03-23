@@ -9,19 +9,19 @@
 #include <cmath>
 
 inline u32 ConvertToRGBA(const Vector3& v) {
-    u8 r = v.get_r() * 255;
-    u8 g = v.get_g() * 255;
-    u8 b = v.get_b() * 255;
-    u32 result = 0xff000000 | b << 16 | g << 8 | r;
+    const u8 r = v.get_r() * 255;
+    const u8 g = v.get_g() * 255;
+    const u8 b = v.get_b() * 255;
+    const u32 result = 0xff000000 | b << 16 | g << 8 | r;
     return result;
 }
 
 inline u32 ConvertToRGBA(const Vector4& v) {
-    u8 r = v.get_r() * 255;
-    u8 g = v.get_g() * 255;
-    u8 b = v.get_b() * 255;
-    u8 a = v.get_a() * 255;
-    u32 result = 0xff000000 | b << 16 | g << 8 | r;
+    const u8 r = v.get_r() * 255;
+    const u8 g = v.get_g() * 255;
+    const u8 b = v.get_b() * 255;
+    const u8 a = v.get_a() * 255;
+    const u32 result = 0xff000000 | b << 16 | g << 8 | r;
     return result;
 }
 
@@ -42,7 +42,7 @@ void Renderer::Render(const std::string& filename, const std::shared_ptr<Camera>
             /* create thread-specific hit object */
             thread_local Hit hit = Hit();
             hit.set_t(far);
-            s_fragment((f32)x/(f32)m_width, (f32)y/(f32)m_height, x, y, !monochrome, camera, scene, light, hit);
+            s_fragment(static_cast<f32>(x)/static_cast<f32>(m_width), static_cast<f32>(y)/static_cast<f32>(m_height), x, y, !monochrome, camera, scene, light, hit);
             //hit.set_t(far);
             //s_fragment((f32)x/(f32)m_width, (f32)y/(f32)m_height, x, y, monochrome, camera, scene, light, hit);
         }
@@ -52,17 +52,17 @@ void Renderer::Render(const std::string& filename, const std::shared_ptr<Camera>
     s_save(filename + ".png", !monochrome);
 }
 
-void Renderer::s_save(const std::string& path, bool monochrome) {
+void Renderer::s_save(const std::string& path, bool monochrome) const {
     /* flip vertically to display uv coordinates correctly */
     stbi_flip_vertically_on_write(true);
     //if(monochrome)
     //    stbi_write_png(path .c_str(), m_width, m_height, 4, m_image_depth.m_data.data(), m_width*4);
     //else
-        stbi_write_png(path .c_str(), m_width, m_height, 4, m_image.m_data.data(), m_width*4);
+        stbi_write_png(path .c_str(), static_cast<i32>(m_width), static_cast<i32>(m_height), 4, m_image.m_data.data(), static_cast<i32>(m_width) * 4);
 }
 
-inline void Renderer::s_fragment(f32 x, f32 y, u32 nx, u32 ny, bool monochrome, const std::shared_ptr<Camera>& camera, const Group& scene, const Light& light, Hit& hit) {
-    Ray ray = camera->generateRay(x, y);
+inline void Renderer::s_fragment(const f32 x, const f32 y, const u32 nx, const u32 ny, bool monochrome, const std::shared_ptr<Camera>& camera, const Group& scene, const Light& light, Hit& hit) {
+    const Ray ray = camera->generateRay(x, y);
 
     /* check for ray intersection with scene m_objects */
     scene.intersect(ray, hit, m_near, m_far);
@@ -70,9 +70,9 @@ inline void Renderer::s_fragment(f32 x, f32 y, u32 nx, u32 ny, bool monochrome, 
     /* normalize surface normal vector */
     hit.m_normal.normalize();
 
-    f32 diffuseK = std::max((f32)(hit.m_normal.dot(-light.m_direction)), (f32)0.0);
+    const f32 diffuseK = std::max(hit.m_normal.dot(-light.m_direction), static_cast<f32>(0.0));
 
-    Vector3 pixelColor = m_ambient_color * hit.m_color + diffuseK * (hit.m_color * light.m_color);
+    const Vector3 pixelColor = m_ambient_color * hit.m_color + diffuseK * (hit.m_color * light.m_color);
 
     /* if no hit, draw background colors */
     if(hit.get_t() == m_far) {
