@@ -16,6 +16,8 @@ public:
     ~PerspectiveCamera() override = default;
 
     [[nodiscard]] Ray generateRay(f32 x, f32 y) const override;
+    [[nodiscard]] Vector4 getDirection() const override { return m_direction; };
+    [[nodiscard]] Vector4 getPosition() const override { return m_center; };
 
     f32 m_scale{};
     f32 m_angle{};

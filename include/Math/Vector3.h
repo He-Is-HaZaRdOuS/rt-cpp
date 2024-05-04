@@ -2,6 +2,7 @@
 #include "Utilities/Macros.h"
 #include <ostream>
 
+
 class Vector3 {
 public:
     Vector3();
@@ -32,6 +33,9 @@ public:
     [[nodiscard]] f32 dot(const Vector3& other) const;
     [[nodiscard]] Vector3 cross(const Vector3& other) const;
     void normalize();
+    void clampup();
+    void clampdown();
+    void clamp();
 
     friend std::ostream& operator<<(std::ostream& os, const Vector3& vector);
     friend Vector3 operator+(const Vector3& self, const Vector3& other);
@@ -41,6 +45,7 @@ public:
     friend Vector3 operator*( f32 other, const Vector3& self);
     friend Vector3 operator-(const Vector3& self);
     friend Vector3 operator*(const Vector3& self, const Vector3& other);
+    friend Vector3 operator/(const Vector3& self, const Vector3& other);
 
 private:
     f32 m_data[3];

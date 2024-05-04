@@ -9,7 +9,7 @@ public:
     Triangle() = default;
     Triangle(const Vector4& v1, const Vector4& v2, const Vector4& v3) : m_v1(v1), m_v2(v2), m_v3(v3) {};
     ~Triangle() override = default;
-    bool intersect(Ray ray, Hit& hit, f32 tmin, f32 tmax) const override;
+    bool intersect(Ray &ray, Hit& hit, f32 tmin, f32 tmax) const override;
     void id() override {std::cout<<"Triangle\n";};
 
     Vector4 m_v1;

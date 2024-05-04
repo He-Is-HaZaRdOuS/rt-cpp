@@ -50,6 +50,23 @@ void Vector3::normalize()
     m_data[2] = m_data[2] * mag;
 }
 
+void Vector3::clampup() {
+    m_data[0] = std::max(m_data[0], 0.0f);
+    m_data[1] = std::max(m_data[1], 0.0f);
+    m_data[2] = std::max(m_data[2], 0.0f);
+}
+
+void Vector3::clampdown() {
+    m_data[0] = std::min(m_data[0], 1.0f);
+    m_data[1] = std::min(m_data[1], 1.0f);
+    m_data[2] = std::min(m_data[2], 1.0f);
+}
+
+void Vector3::clamp() {
+    clampdown();
+    clampup();
+}
+
 std::ostream& operator<<(std::ostream& os, const Vector3& vector)
 {
     os << "[";
@@ -86,6 +103,10 @@ Vector3 operator-(const Vector3 &self) {
 
 Vector3 operator*(const Vector3 &self, const Vector3 &other) {
     return {self.m_data[0] * other.m_data[0], self.m_data[1] * other.m_data[1], self.m_data[2] * other.m_data[2]};
+}
+
+Vector3 operator/(const Vector3 &self, const Vector3 &other) {
+    return {self.m_data[0] / other.m_data[0], self.m_data[1] / other.m_data[1], self.m_data[2] / other.m_data[2]};
 }
 
 Vector3 operator*(f32 other, const Vector3 &self) {

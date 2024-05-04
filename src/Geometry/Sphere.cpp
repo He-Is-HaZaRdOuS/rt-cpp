@@ -1,10 +1,13 @@
 #include "Geometry/Sphere.h"
 
-bool Sphere::intersect(const Ray ray, Hit& hit, const f32 tmin, const f32 tmax) const {
-    const Vector4 offset = ray.m_origin - m_center;
+#include <cmath>
+
+bool Sphere::intersect(Ray &ray, Hit& hit, const f32 tmin, const f32 tmax) const {
+
+    const Vector4 offset = m_center - ray.m_origin;
     const f32 a = ray.m_direction.dot(ray.m_direction);
-    const f32 b = 2.0f * offset.dot(ray.m_direction);
-    const f32 c = offset.dot(offset) - m_radius * m_radius;
+    const f32 b = -2.0f * offset.dot(ray.m_direction);
+    const f32 c = offset.dot(offset) - (m_radius * m_radius);
     const f32 discriminant = b * b - 4.0f * a * c;
 
     /* if discriminant is less than 0, ray didn't hit object, so do nothing */
@@ -23,7 +26,7 @@ bool Sphere::intersect(const Ray ray, Hit& hit, const f32 tmin, const f32 tmax) 
 
 
     if(t0 > 0 && t1 > 0) {
-        t = (t0 > t1) ? t1 : t0;
+        t = (t0 < t1) ? t0 : t1;
     }
     else if(t0 < 0 && t1 > 0)
         t = t1;
@@ -40,8 +43,22 @@ bool Sphere::intersect(const Ray ray, Hit& hit, const f32 tmin, const f32 tmax) 
     }
 
     hit.set_t(t);
-    hit.set_color(m_color);
-    hit.set_normal((ray.m_origin + ray.m_direction * t) - m_center);
-    hit.m_normal.normalize();
+
+    // set hit material index to sphere material index
+    hit.m_MaterialIndex = m_MaterialIndex;
+
+    // Calculate the point of intersection
+    Vector4 intersection_point = ray.m_origin + ray.m_direction * t;
+    hit.m_Point = intersection_point.getVec3();
+    hit.m_Point.normalize();
+
+    // Calculate the hit normal
+    Vector4 hit_normal = (intersection_point - m_center) * (1/m_radius);
+
+    //hit_normal = hit_normal * 0.5 + 0.5;
+
+    // Set the hit normal
+    hit.set_normal(hit_normal);
+    hit.didHit = true;
     return true;
 }

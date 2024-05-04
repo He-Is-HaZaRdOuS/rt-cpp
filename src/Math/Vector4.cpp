@@ -31,6 +31,11 @@ Vector4::Vector4(const Vector4& other)
 	memcpy(m_data, other.m_data, sizeof(m_data));
 }
 
+Vector4::Vector4(const Vector3& other)
+{
+	Vector4(other.get_x(), other.get_y(), other.get_z());
+}
+
 Vector4 Vector4::Zero()
 {
 	return {0.0, 0.0, 0.0, 0.0};
@@ -69,6 +74,17 @@ void Vector4::normalize()
 	m_data[0] = m_data[0] * mag;
 	m_data[1] = m_data[1] * mag;
 	m_data[2] = m_data[2] * mag;
+}
+
+void Vector4::clamp() {
+	m_data[0] = std::max(m_data[0], 0.0f);
+	m_data[1] = std::max(m_data[1], 0.0f);
+	m_data[2] = std::max(m_data[2], 0.0f);
+	m_data[3] = std::max(m_data[3], 0.0f);
+}
+
+Vector3 Vector4::getVec3() {
+	return Vector3(get_x(), get_y(), get_z());
 }
 
 std::ostream& operator<<(std::ostream& os, const Vector4& vector)
@@ -111,4 +127,8 @@ f32 Vector4::dot(const Vector3 &other) const {
 
 Vector4 operator-(const Vector4 &self, f32 other) {
     return {self.m_data[0] - other, self.m_data[1] - other, self.m_data[2] - other, self.m_data[3]};
+}
+
+Vector4 operator-(const Vector4 &self) {
+	return {-self.m_data[0], -self.m_data[1], -self.m_data[2], -self.m_data[3]};
 }

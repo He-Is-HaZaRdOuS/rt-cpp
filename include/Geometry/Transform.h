@@ -12,7 +12,7 @@ public:
         m_object = object;
     }
     ~Transform() override = default;
-    bool intersect(Ray ray, Hit& hit, f32 tmin, f32 tmax) const override;
+    bool intersect(Ray &ray, Hit& hit, f32 tmin, f32 tmax) const override;
     void id() override {std::cout<<"Transform\n";};
 
     Matrix4 m_transform = Matrix4();

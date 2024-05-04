@@ -9,6 +9,7 @@ public:
 	Vector4(f32 f1, f32 f2, f32 f3);
 	Vector4(f32 f1, f32 f2, f32 f3, f32 f4);
 	Vector4(const Vector4& other);
+	Vector4(const Vector3& other);
 
 	~Vector4() = default;
 
@@ -40,6 +41,9 @@ public:
 	[[nodiscard]] Vector4 cross(const Vector4& other) const;
 	[[nodiscard]] Vector4 cross_zero(const Vector4& other) const;
 	void normalize();
+	void clamp();
+
+	Vector3 getVec3();
 
 	friend std::ostream& operator<<(std::ostream& os, const Vector4& vector);
 	friend Vector4 operator+(const Vector4& self, const Vector4& other);
@@ -48,6 +52,7 @@ public:
     friend Vector4 operator*(f32 other, const Vector4& self);
     friend Vector4 operator+(const Vector4& self, f32 other);
     friend Vector4 operator-(const Vector4& self, f32 other);
+	friend Vector4 operator-(const Vector4& self);
 
 private:
 	f32 m_data[4];

@@ -1,6 +1,8 @@
 #include "Geometry/Triangle.h"
 
-bool Triangle::intersect(const Ray ray, Hit &hit, const f32 tmin, const f32 tmax) const {
+#include <cmath>
+
+bool Triangle::intersect(Ray& ray, Hit &hit, const f32 tmin, const f32 tmax) const {
     // compute the plane's normal
     const Vector4 v0v1 = m_v2 - m_v1;
     const Vector4 v0v2 = m_v3 - m_v1;
@@ -56,8 +58,13 @@ bool Triangle::intersect(const Ray ray, Hit &hit, const f32 tmin, const f32 tmax
     }
 
     hit.set_t(t);
-    hit.set_color(m_color);
+    // Calculate the point of intersection
+    Vector4 intersection_point = ray.m_origin + ray.m_direction * t;
+    hit.m_Point = intersection_point.getVec3();
+    hit.m_Point.normalize();
+    // set hit material index to sphere material index
+    hit.m_MaterialIndex = m_MaterialIndex;
     hit.set_normal(m_normal);
-    hit.m_normal.normalize();
+    hit.didHit = true;
     return true; // this ray hits the triangle
 }

@@ -4,9 +4,7 @@
 
 class Light {
 public:
-    Light() = default;
-    ~Light() = default;
+    virtual ~Light() = default;
 
-    Vector3 m_direction;
-    Vector3 m_color;
+    Vector3 m_Color;
 };
