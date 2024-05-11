@@ -13,7 +13,8 @@ bool Transform::intersect(Ray &ray, Hit &hit, const f32 tmin, const f32 tmax) co
         // Calculate the point of intersection
         Vector4 intersection_point = ray.m_origin + ray.m_direction * hit.get_t();
         hit.m_Point = intersection_point.getVec3();
-        hit.m_Point.normalize();
+        hit.m_Id = m_Id;
+        //hit.m_Point.normalize();
     }
     return hit.didHit;
 }

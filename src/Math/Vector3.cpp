@@ -17,7 +17,9 @@ Vector3::Vector3(const f32 f1, const f32 f2, const f32 f3)
 
 Vector3::Vector3(const Vector3& other)
 {
-    memcpy(m_data, other.m_data, sizeof(m_data));
+    m_data[0] = other.get_x();
+    m_data[1] = other.get_y();
+    m_data[2] = other.get_z();
 }
 
 Vector3 Vector3::Zero()

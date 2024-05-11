@@ -33,7 +33,10 @@ Vector4::Vector4(const Vector4& other)
 
 Vector4::Vector4(const Vector3& other)
 {
-	Vector4(other.get_x(), other.get_y(), other.get_z());
+	m_data[0] = other.get_x();
+	m_data[1] = other.get_y();
+	m_data[2] = other.get_z();
+	m_data[3] = 0.0;
 }
 
 Vector4 Vector4::Zero()
@@ -84,7 +87,7 @@ void Vector4::clamp() {
 }
 
 Vector3 Vector4::getVec3() {
-	return Vector3(get_x(), get_y(), get_z());
+	return {get_x(), get_y(), get_z()};
 }
 
 std::ostream& operator<<(std::ostream& os, const Vector4& vector)

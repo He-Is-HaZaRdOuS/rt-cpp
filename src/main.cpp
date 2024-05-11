@@ -23,6 +23,10 @@
 #include "Renderer/Renderer.h"
 #include "Renderer/Light.h"
 
+inline Vector3 reflect(const Vector3& I, const Vector3& N) {
+    return N * 2 * I.dot(N) - I;
+}
+
 void init(Renderer& renderer, std::shared_ptr<Camera>& camera, const std::string& path);
 std::shared_ptr<Camera> collectCamera(const json &data);
 void collectBackground(const json &data, Renderer &renderer);
@@ -33,7 +37,14 @@ std::vector<PhongMaterial> collectMaterial(const json &data);
 int main() {
     /* Start timer to measure program running time */
     //Timer timer;
+/*
+    Vector3 up = Vector3(0, 1, 0);
+    Vector3 normal = Vector3(0, 0.8, 0.6);
 
+    std::cout << reflect(up, normal);
+
+    return 0;
+    */
     /* JSON filenames are provided without the extension */
     std::string file1 = "scene1_exponent_variations";
     std::string file2 = "scene2_plane_sphere";
@@ -60,8 +71,8 @@ int main() {
     init(renderer, camera_ptr, file3);
     renderer.Render(file3, camera_ptr, 2, 40, true);
 
-/*
-    init(renderer, camera_ptr, file4);
+
+   /* init(renderer, camera_ptr, file4);
     renderer.Render(file4, camera_ptr, 2, 40, true);
 
     init(renderer, camera_ptr, file5);
@@ -303,6 +314,7 @@ Group collectScene(const json &data) {
     f32 v1_buf[3];
     f32 v2_buf[3];
     f32 v3_buf[3];
+    u32 id = 0;
     Group scene = Group();
 
     if(data.contains("group")) {
@@ -328,6 +340,7 @@ Group collectScene(const json &data) {
 
                         auto m = material->dump();
                         sp0->m_MaterialIndex = stoi(m);
+                        sp0->m_Id = id++;
 
                         scene.m_objects.push_back(sp0);
                     }
@@ -363,6 +376,7 @@ Group collectScene(const json &data) {
                                                                                             {v2_buf[0], v2_buf[1], v2_buf[2]},
                                                                                             {v3_buf[0], v3_buf[1], v3_buf[2]}));
                         tr0->m_MaterialIndex = std::stoi(m);
+                        tr0->m_Id = id++;
                         Vector4 normal0 = {tr0->m_v2.cross_zero(tr0->m_v3)};
                         tr0->m_normal = {normal0.get_x(), normal0.get_y(), normal0.get_z()};
                         scene.m_objects.push_back(tr0);
@@ -388,6 +402,7 @@ Group collectScene(const json &data) {
                         std::shared_ptr<Plane> p0 = std::make_shared<Plane>(Plane());
                         auto m = material->dump();
                         p0->m_MaterialIndex = std::stoi(m);
+                        p0->m_Id = id++;
                         p0->m_d = stof(d);
                         p0->m_normal = {v1_buf[0], v1_buf[1], v1_buf[2]};
                         scene.m_objects.push_back(p0);
@@ -536,7 +551,7 @@ Group collectScene(const json &data) {
 
                             }
                         }
-
+                        t0->m_Id = id++;
                         scene.m_objects.push_back(t0);
 
                     }
@@ -559,7 +574,7 @@ std::vector<PhongMaterial> collectMaterial(const json &data) {
     if(data.contains("materials")) {
         const auto materials = data.find("materials");
         for(const auto& n : *materials) {
-            //std::cout << n << "\n";
+            std::cout << n << "\n";
             if(n.contains("phongMaterial")) {
                 auto const& phong = n.find("phongMaterial");
                 auto const& diffuse = phong->find("diffuseColor");
@@ -572,7 +587,7 @@ std::vector<PhongMaterial> collectMaterial(const json &data) {
                 }
                 pm.m_DiffuseColor = {buffer[0], buffer[1], buffer[2]};
 
-                if(data.contains("specular")) {
+                if(phong->contains("specularColor")) {
                     auto const& specular = phong->find("specularColor");
 
 
@@ -583,14 +598,14 @@ std::vector<PhongMaterial> collectMaterial(const json &data) {
                     pm.m_SpecularColor = {buffer[0], buffer[1], buffer[2]};
                 }
 
-                if(data.contains("exponent")) {
+                if(phong->contains("exponent")) {
                     auto const& e = phong->find("exponent");
 
                     auto const& exp = e->dump();
                     pm.m_ExponentValue = stof(exp);
                 }
 
-                if(data.contains("transparentColor")) {
+                if(phong->contains("transparentColor")) {
                     auto const& transparent = phong->find("transparentColor");
 
                     index = 0;
@@ -600,7 +615,7 @@ std::vector<PhongMaterial> collectMaterial(const json &data) {
                     pm.m_TransparentColor = {buffer[0], buffer[1], buffer[2]};
                 }
 
-                if(data.contains("reflectiveColor")) {
+                if(phong->contains("reflectiveColor")) {
                     auto const& reflective = phong->find("reflectiveColor");
 
                     index = 0;
@@ -610,7 +625,7 @@ std::vector<PhongMaterial> collectMaterial(const json &data) {
                     pm.m_ReflectiveColor = {buffer[0], buffer[1], buffer[2]};
                 }
 
-                if(data.contains("indexOfRefraction")) {
+                if(phong->contains("indexOfRefraction")) {
                     auto const& ior = phong->find("indexOfRefraction");
 
                     auto const& q = ior->dump();

@@ -50,7 +50,7 @@ bool Sphere::intersect(Ray &ray, Hit& hit, const f32 tmin, const f32 tmax) const
     // Calculate the point of intersection
     Vector4 intersection_point = ray.m_origin + ray.m_direction * t;
     hit.m_Point = intersection_point.getVec3();
-    hit.m_Point.normalize();
+    //hit.m_Point.normalize();
 
     // Calculate the hit normal
     Vector4 hit_normal = (intersection_point - m_center) * (1/m_radius);
@@ -60,5 +60,6 @@ bool Sphere::intersect(Ray &ray, Hit& hit, const f32 tmin, const f32 tmax) const
     // Set the hit normal
     hit.set_normal(hit_normal);
     hit.didHit = true;
+    hit.m_Id = m_Id;
     return true;
 }

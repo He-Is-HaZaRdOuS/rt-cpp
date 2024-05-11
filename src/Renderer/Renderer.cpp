@@ -79,12 +79,13 @@ void Renderer::s_save(const std::string& path, bool monochrome) const {
     */
 }
 
-inline void Renderer::s_fragment(const f32 x, const f32 y, const u32 nx, const u32 ny, bool monochrome, const std::shared_ptr<Camera>& camera, Hit& hit) {
+inline void Renderer::s_fragment(const f32 x, const f32 y, const u32 nx, const u32 ny, bool monochrome, const std::shared_ptr<Camera>& camera, Hit hit) {
     Ray ray = camera->generateRay(x, y);
 
     Vector3 pixelColor = traceRay(ray, m_Near, 5, 1.0,1.0, hit);
 
     /* if no hit, draw background colors */
+    
     if(hit.get_t() == m_Far) {
         //s_ImageDepth.set_pixel(nx, ny, ConvertToRGBA(bg));
         m_Image.set_pixel(nx, ny, ConvertToRGBA(s_GlobalColor));
@@ -105,9 +106,10 @@ inline void Renderer::s_fragment(const f32 x, const f32 y, const u32 nx, const u
 
 }
 
-Vector3 Renderer::traceRay(Ray &ray, f32 tmin, u32 bounces, f32 weight, f32 indexOfRefraction, Hit &hit) {
+Vector3 Renderer::traceRay(Ray &ray, f32 tmin, u32 bounces, f32 weight, f32 indexOfRefraction, Hit& hit) {
 
     /* check for ray intersection with scene m_objects */
+    //ray.m_direction.normalize();
     s_scene.intersect(ray, hit, m_Near, m_Far);
 
     /* normalize surface normal vector */
@@ -122,13 +124,16 @@ Vector3 Renderer::traceRay(Ray &ray, f32 tmin, u32 bounces, f32 weight, f32 inde
         //std::cout << light.m_Color;
         Ray subRay = Ray(hit.m_Point, -light.m_Direction);
         Hit subHit = Hit();
-        bool isInShadow = s_scene.inShadow(subRay, subHit, 0.0001, m_Far);
+        //std::cout << subRay.m_origin << " " << subRay.m_direction << "\n";
+        bool isInShadow = s_scene.inShadow(subRay, subHit, hit, 0.01, m_Far);
+        //std::cout << hit.m_Point;
         if(!isInShadow) {
             rgb = rgb + material.shade(ray, hit, light);
         }
         else {
-            std::cout << "shaded";
+            // idk
         }
     }
+    rgb.clamp();
     return rgb;
 }

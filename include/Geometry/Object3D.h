@@ -12,4 +12,5 @@ public:
     virtual void id() = 0;
 
     u32 m_MaterialIndex{};
+    u32 m_Id;
 };
