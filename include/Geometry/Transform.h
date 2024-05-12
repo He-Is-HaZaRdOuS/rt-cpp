@@ -16,6 +16,11 @@ public:
     void id() override {std::cout<<"Transform\n";};
 
     Matrix4 m_transform = Matrix4();
+    Matrix4 m_translate = Matrix4();
+    Matrix4 m_rotatex = Matrix4();
+    Matrix4 m_rotatey = Matrix4();
+    Matrix4 m_rotatez = Matrix4();
+    Matrix4 m_scale = Matrix4();
     Matrix4 m_transform_normal = Matrix4();
     std::shared_ptr<Object3D> m_object;
 };

@@ -71,6 +71,9 @@ int main() {
     init(renderer, camera_ptr, file6);
     renderer.Render(file6, camera_ptr, 2, 40, true);
 
+    init(renderer, camera_ptr, file7);
+    renderer.Render(file7, camera_ptr, 2, 40, true);
+
     std::cout << "STOPPING GLOBAL TIMER!!!" << std::endl;
     timer.Stop();
 
@@ -410,28 +413,28 @@ Group collectScene(const json &data) {
                                         buffer[index++] = p;
                                     }
                                     Matrix4 t = Matrix4::Translate(buffer[0], buffer[1], buffer[2]);
-                                    t0->m_transform = t0->m_transform.mult(t);
+                                    t0->m_translate = t;
                                 }
 
                                 if(transformations.contains("zrotate")) {
                                     auto const &zrotate = transformations.find("zrotate");
                                     auto z = zrotate->dump();
                                     Matrix4 t = Matrix4::RotateZ(stof(z));
-                                    t0->m_transform = t0->m_transform.mult(t);
+                                    t0->m_rotatez = t;
                                 }
 
                                 if(transformations.contains("yrotate")) {
                                     auto const &yrotate = transformations.find("yrotate");
                                     auto y = yrotate->dump();
                                     Matrix4 t = Matrix4::RotateY(stof(y));
-                                    t0->m_transform = t0->m_transform.mult(t);
+                                    t0->m_rotatey = t;
                                 }
 
                                 if(transformations.contains("xrotate")) {
                                     auto const& xrotate = transformations.find("xrotate");
                                     auto x = xrotate->dump();
                                     Matrix4 t = Matrix4::RotateX(stof(x));
-                                    t0->m_transform = t0->m_transform.mult(t);
+                                    t0->m_rotatex = t;
                                 }
 
                                 if(transformations.contains("scale")) {
@@ -442,9 +445,15 @@ Group collectScene(const json &data) {
                                         buffer[index++] = p;
                                     }
                                     Matrix4 t = Matrix4::Scale(buffer[0], buffer[1], buffer[2]);
-                                    t0->m_transform = t0->m_transform.mult(t);
+                                    t0->m_scale = t;
                                     //std::cout << *scale;
                                 }
+                                // SRT
+                                t0->m_transform = t0->m_transform.mult(t0->m_scale);
+                                t0->m_transform = t0->m_transform.mult(t0->m_rotatex);
+                                t0->m_transform = t0->m_transform.mult(t0->m_rotatey);
+                                t0->m_transform = t0->m_transform.mult(t0->m_rotatez);
+                                t0->m_transform = t0->m_transform.mult(t0->m_translate);
 
                                 t0->m_transform = t0->m_transform.inverse();
                                 t0->m_transform_normal = t0->m_transform.transpose();
