@@ -27,6 +27,10 @@ Vector3 Vector3::Zero()
     return {0.0, 0.0, 0.0};
 }
 
+f32 Vector3::length2() const {
+    return m_data[0] * m_data[0] + m_data[1] * m_data[1] + m_data[2] * m_data[2];
+}
+
 f32 Vector3::magnitude() const {
     return static_cast<f32>(sqrt(m_data[0] * m_data[0] + m_data[1] * m_data[1] + m_data[2] * m_data[2]));
 }

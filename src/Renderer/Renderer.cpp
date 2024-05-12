@@ -40,6 +40,18 @@ inline u32 ConvertToRGBA(const Vector4& v) {
     return result;
 }
 
+inline Vector3 reflect(const Vector3& I, const Vector3& N) {
+    return I - 2 * I.dot(N) * N;
+}
+
+inline Vector3 refract(const Vector3& V, const Vector3& n, f32 etai_over_etat) {
+    Vector3 uv = -V;
+    f32 cos_theta = fmin(uv.dot(n), 1.0);
+    Vector3 r_out_perp =  etai_over_etat * (uv + cos_theta*n);
+    Vector3 r_out_parallel = -sqrtf(fabs(1.0 - r_out_perp.length2())) * n;
+    return r_out_perp + r_out_parallel;
+}
+
 void Renderer::Render(const std::string& filename, const std::shared_ptr<Camera>& camera, f32 near, f32 far, bool monochrome) {
     m_Near = near;
     m_Far = far;
@@ -54,6 +66,7 @@ void Renderer::Render(const std::string& filename, const std::shared_ptr<Camera>
         for(u32 x = 0; x < m_Width; ++x){
             /* create thread-specific hit object */
             thread_local Hit hit = Hit();
+            hit.m_Id = -1;
             hit.set_t(far);
             s_fragment(static_cast<f32>(x)/static_cast<f32>(m_Width), static_cast<f32>(y)/static_cast<f32>(m_Height), x, y, !monochrome, camera, hit);
             //hit.set_t(far);
@@ -82,10 +95,10 @@ void Renderer::s_save(const std::string& path, bool monochrome) const {
 inline void Renderer::s_fragment(const f32 x, const f32 y, const u32 nx, const u32 ny, bool monochrome, const std::shared_ptr<Camera>& camera, Hit hit) {
     Ray ray = camera->generateRay(x, y);
 
-    Vector3 pixelColor = traceRay(ray, m_Near, 5, 1.0,1.0, hit);
+    Vector3 pixelColor = traceRay(ray, m_Near, 2, 1.0,1.0, hit);
+    pixelColor.clamp();
 
     /* if no hit, draw background colors */
-    
     if(hit.get_t() == m_Far) {
         //s_ImageDepth.set_pixel(nx, ny, ConvertToRGBA(bg));
         m_Image.set_pixel(nx, ny, ConvertToRGBA(s_GlobalColor));
@@ -106,34 +119,67 @@ inline void Renderer::s_fragment(const f32 x, const f32 y, const u32 nx, const u
 
 }
 
-Vector3 Renderer::traceRay(Ray &ray, f32 tmin, u32 bounces, f32 weight, f32 indexOfRefraction, Hit& hit) {
+Vector3 Renderer::traceRay(Ray &ray, f32 tmin, i32 bounces, f32 weight, f32 indexOfRefraction, Hit& hit) {
+    /* Recursion depth limit */
+    if(bounces <= 0) {
+        return {0.0, 0.0, 0.0};
+    }
 
     /* check for ray intersection with scene m_objects */
-    //ray.m_direction.normalize();
-    s_scene.intersect(ray, hit, m_Near, m_Far);
+    bool miss = s_scene.intersect(ray, hit, tmin, m_Far);
+    if(!miss) {
+        return {0.0, 0.0, 0.0};
+    }
 
     /* normalize surface normal vector */
     hit.m_Normal.normalize();
 
     PhongMaterial material = Renderer::s_materials.at(hit.m_MaterialIndex);
-
     Vector3 rgb = {0.0, 0.0, 0.0};
-    for(auto& light : Renderer::s_lights) {
-        light.m_Direction.normalize();
-        //std::cout << light.m_Direction;
-        //std::cout << light.m_Color;
-        Ray subRay = Ray(hit.m_Point, -light.m_Direction);
-        Hit subHit = Hit();
-        //std::cout << subRay.m_origin << " " << subRay.m_direction << "\n";
-        bool isInShadow = s_scene.inShadow(subRay, subHit, hit, 0.01, m_Far);
-        //std::cout << hit.m_Point;
+
+    /* Shoot out ray for every light */
+    for(const auto& light : Renderer::s_lights) {
+        /* Object occluded by another object */
+        Ray shadowRay = Ray(hit.m_Point , -light.m_Direction);
+        Hit shadowHit = Hit();
+        bool isInShadow = s_scene.inShadow(shadowRay, shadowHit, hit, FLT_EPSILON, m_Far);
         if(!isInShadow) {
             rgb = rgb + material.shade(ray, hit, light);
         }
-        else {
-            // idk
+
+        /* Reflective Object */
+        if(material.m_IsReflective) {
+            Vector3 reflectVector = reflect(ray.m_direction.getVec3(), hit.m_Normal);
+            Ray reflectRay = Ray(hit.m_Point + hit.m_Normal * 0.00001, reflectVector);
+            Hit reflectHit = Hit();
+            rgb = rgb + material.m_ReflectiveColor * traceRay(reflectRay, FLT_EPSILON, bounces-1, weight, material.m_IndexOfRefraction, reflectHit);
         }
+
+        /* Transparent Object */
+        if(material.m_IsTransparent) {
+            f32 correctedRefractionIndex = hit.m_OutwardNormal ? (1.0f/material.m_IndexOfRefraction) : material.m_IndexOfRefraction;
+            Vector3 transmittanceDirection = ray.m_direction.getVec3();
+            transmittanceDirection.normalize();
+            Vector3 nTransmittanceDirection = -transmittanceDirection;
+
+            f32 cos_theta = fmin(nTransmittanceDirection.dot(hit.m_Normal), 1.0);
+            f32 sin_theta = sqrt(1.0 - cos_theta*cos_theta);
+
+            bool canRefract = correctedRefractionIndex * sin_theta > 1.0;
+            Vector3 refractedVector;
+
+            if(!canRefract) {
+                refractedVector = reflect(transmittanceDirection, hit.m_Normal);
+            }
+            else {
+                refractedVector = refract(transmittanceDirection, hit.m_Normal, correctedRefractionIndex);
+            }
+
+            Ray transmittedRay = Ray(hit.m_Point, refractedVector);
+            Hit transmittedHit = Hit();
+            rgb = rgb + material.m_TransparentColor * traceRay(transmittedRay, FLT_EPSILON, bounces-1, weight, material.m_IndexOfRefraction, transmittedHit);
+        }
+
     }
-    rgb.clamp();
     return rgb;
 }

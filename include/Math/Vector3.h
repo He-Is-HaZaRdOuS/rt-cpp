@@ -29,6 +29,7 @@ public:
     void set_g(f32 g) { m_data[1] = g; }
     void set_b(f32 b) { m_data[2] = b; }
 
+    [[nodiscard]] f32 length2() const;
     [[nodiscard]] f32 magnitude() const;
     [[nodiscard]] f32 dot(const Vector3& other) const;
     [[nodiscard]] Vector3 cross(const Vector3& other) const;

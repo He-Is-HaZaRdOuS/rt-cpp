@@ -16,7 +16,7 @@ bool Plane::intersect(Ray &ray, Hit &hit, const f32 tmin, const f32 tmax) const 
     if(hit.get_t() < t || t < tmin || t > tmax){
         return false;
     }
-    //std::cout << t << " ";
+
     hit.set_t(t);
     // Calculate the point of intersection
     Vector4 intersection_point = ray.m_origin + ray.m_direction * t;
@@ -27,5 +27,6 @@ bool Plane::intersect(Ray &ray, Hit &hit, const f32 tmin, const f32 tmax) const 
     hit.set_normal(m_normal);
     hit.didHit = true;
     hit.m_Id = m_Id;
+    hit.m_OutwardNormal = ray.m_direction.dot(hit.m_Normal) < 0;
     return true;
 }

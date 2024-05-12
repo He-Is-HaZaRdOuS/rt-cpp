@@ -12,6 +12,7 @@ bool Sphere::intersect(Ray &ray, Hit& hit, const f32 tmin, const f32 tmax) const
 
     /* if discriminant is less than 0, ray didn't hit object, so do nothing */
     if(discriminant < 0.0f) {
+        //std::cout << "no";
         return false;
     }
 
@@ -32,9 +33,6 @@ bool Sphere::intersect(Ray &ray, Hit& hit, const f32 tmin, const f32 tmax) const
         t = t1;
     else if(t1 < 0 && t0 > 0)
         t = t0;
-    else
-        return false;
-
 
     /* if t-distance inside hit is smaller than current hit distance, do nothing */
     /* also discard when hit is outside the frustum ( < near && > far ) */
@@ -61,5 +59,6 @@ bool Sphere::intersect(Ray &ray, Hit& hit, const f32 tmin, const f32 tmax) const
     hit.set_normal(hit_normal);
     hit.didHit = true;
     hit.m_Id = m_Id;
+    hit.m_OutwardNormal = ray.m_direction.dot(hit.m_Normal) < 0;
     return true;
 }

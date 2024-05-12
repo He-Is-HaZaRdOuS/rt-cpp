@@ -19,7 +19,8 @@ public:
     Vector3 m_Point;
     Vector3 m_Normal;
     bool didHit = false;
-    u32 m_Id;
+    bool m_OutwardNormal = false;
+    i32 m_Id;
 
 private:
     f32 t{FLT_MAX};

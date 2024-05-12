@@ -35,6 +35,7 @@ public:
 	void set_b(f32 b) { m_data[2] = b; }
 	void set_a(f32 a) { m_data[3] = a; }
 
+	[[nodiscard]] f32 length2() const;
 	[[nodiscard]] f32 magnitude() const;
 	[[nodiscard]] f32 dot(const Vector4& other) const;
     [[nodiscard]] f32 dot(const Vector3& other) const;
@@ -43,7 +44,7 @@ public:
 	void normalize();
 	void clamp();
 
-	Vector3 getVec3();
+	Vector3 getVec3() const;
 
 	friend std::ostream& operator<<(std::ostream& os, const Vector4& vector);
 	friend Vector4 operator+(const Vector4& self, const Vector4& other);

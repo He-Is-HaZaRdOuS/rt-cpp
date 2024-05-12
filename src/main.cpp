@@ -64,24 +64,23 @@ int main() {
 
     init(renderer, camera_ptr,  file1);
     renderer.Render(file1, camera_ptr,  2, 40, true);
-
+/*
     init(renderer, camera_ptr,  file2);
     renderer.Render(file2, camera_ptr,  2, 40, true);
 
     init(renderer, camera_ptr, file3);
     renderer.Render(file3, camera_ptr, 2, 40, true);
 
-
-   /* init(renderer, camera_ptr, file4);
-    renderer.Render(file4, camera_ptr, 2, 40, true);
-
+    init(renderer, camera_ptr, file4);
+    renderer.Render(file4, camera_ptr, 2, 8, true);
+*/
     init(renderer, camera_ptr, file5);
-    renderer.Render(file5, camera_ptr, 2, 40, true);
+    renderer.Render(file5, camera_ptr, 0, 40, true);
 
     init(renderer, camera_ptr, file6);
     renderer.Render(file6, camera_ptr, 2, 40, true);
 
-*/
+
     std::cout << "STOPPING GLOBAL TIMER!!!" << std::endl;
     timer.Stop();
 
@@ -178,7 +177,7 @@ std::shared_ptr<Camera> collectCamera(const json &data) {
                 }
                 /* calculate horizontal vector */
                 perspcam_ptr->m_horizontal = perspcam_ptr->m_direction.cross_zero( perspcam_ptr->m_up);
-                perspcam_ptr->m_scale = static_cast<f32>(tan((perspcam_ptr->m_angle) * (M_PI / 180)));
+                perspcam_ptr->m_scale = static_cast<f32>(1.0 / std::tan((perspcam_ptr->m_angle * M_PI / 180.0) * 0.5));
 
                 return perspcam_ptr;
         }
@@ -238,7 +237,7 @@ std::vector<DirectionalLight> collectLight(const json &data) {
         try {
             const auto lights = data.find("lights");
             for(const auto& n : *lights) {
-                std::cout << n << "\n";
+                //std::cout << n << "\n";
                 if(n.contains("directionalLight")) {
                     DirectionalLight dl = DirectionalLight();
                     const auto dLight = n.find("directionalLight");
@@ -314,7 +313,7 @@ Group collectScene(const json &data) {
     f32 v1_buf[3];
     f32 v2_buf[3];
     f32 v3_buf[3];
-    u32 id = 0;
+    i32 id = 0;
     Group scene = Group();
 
     if(data.contains("group")) {
@@ -322,7 +321,6 @@ Group collectScene(const json &data) {
             const auto group = data.find("group");
             {
                 for (const auto& n : *group){
-                    std::cout << n << "\n";
                     if(n.contains("sphere")){
                         //std::cout << n << "\n";
                         auto const& sphere = n.find("sphere");
@@ -410,12 +408,10 @@ Group collectScene(const json &data) {
                     }
 
                     if(n.contains("transform")){
-                        //std::cout << n << "\n";
                         std::shared_ptr<Transform> t0 = std::make_shared<Transform>(Transform());
                         auto const& transform = n.find("transform");
                         if(transform->contains("transformations")) {
                             auto const& transformations0 = transform->find("transformations");
-                            //std::cout << *transformations0 << "\n";
                             for(auto const& transformations: *transformations0) {
                                 if(transformations.contains("translate")) {
                                     auto const& translate = transformations.find("translate");
@@ -574,7 +570,7 @@ std::vector<PhongMaterial> collectMaterial(const json &data) {
     if(data.contains("materials")) {
         const auto materials = data.find("materials");
         for(const auto& n : *materials) {
-            std::cout << n << "\n";
+            //std::cout << n << "\n";
             if(n.contains("phongMaterial")) {
                 auto const& phong = n.find("phongMaterial");
                 auto const& diffuse = phong->find("diffuseColor");
@@ -613,6 +609,13 @@ std::vector<PhongMaterial> collectMaterial(const json &data) {
                         buffer[index++] = t;
                     }
                     pm.m_TransparentColor = {buffer[0], buffer[1], buffer[2]};
+                    if(pm.m_TransparentColor.get_x() > 0.0 || pm.m_TransparentColor.get_y() > 0.0 || pm.m_TransparentColor.get_z() > 0.0)
+                        pm.m_IsTransparent = true;
+                    else
+                        pm.m_IsTransparent = false;
+                }
+                else {
+                    pm.m_IsTransparent = false;
                 }
 
                 if(phong->contains("reflectiveColor")) {
@@ -623,6 +626,13 @@ std::vector<PhongMaterial> collectMaterial(const json &data) {
                         buffer[index++] = r;
                     }
                     pm.m_ReflectiveColor = {buffer[0], buffer[1], buffer[2]};
+                    if(pm.m_ReflectiveColor.get_x() > 0.0 || pm.m_ReflectiveColor.get_y() > 0.0 || pm.m_ReflectiveColor.get_z() > 0.0)
+                        pm.m_IsReflective = true;
+                    else
+                        pm.m_IsReflective = false;
+                }
+                else {
+                    pm.m_IsReflective = false;
                 }
 
                 if(phong->contains("indexOfRefraction")) {

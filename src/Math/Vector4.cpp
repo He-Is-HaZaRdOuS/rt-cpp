@@ -44,6 +44,10 @@ Vector4 Vector4::Zero()
 	return {0.0, 0.0, 0.0, 0.0};
 }
 
+f32 Vector4::length2() const {
+	return m_data[0] * m_data[0] + m_data[1] * m_data[1] + m_data[2] * m_data[2];
+}
+
 f32 Vector4::magnitude() const {
 	return static_cast<f32>(sqrt(m_data[0] * m_data[0] + m_data[1] * m_data[1] + m_data[2] * m_data[2]));
 }
@@ -86,7 +90,7 @@ void Vector4::clamp() {
 	m_data[3] = std::max(m_data[3], 0.0f);
 }
 
-Vector3 Vector4::getVec3() {
+Vector3 Vector4::getVec3() const {
 	return {get_x(), get_y(), get_z()};
 }
 

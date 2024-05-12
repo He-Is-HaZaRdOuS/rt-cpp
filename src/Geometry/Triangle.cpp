@@ -67,5 +67,6 @@ bool Triangle::intersect(Ray& ray, Hit &hit, const f32 tmin, const f32 tmax) con
     hit.set_normal(m_normal);
     hit.didHit = true;
     hit.m_Id = m_Id;
-    return true; // this ray hits the triangle
+    hit.m_OutwardNormal = ray.m_direction.dot(hit.m_Normal) < 0;
+    return true;
 }
