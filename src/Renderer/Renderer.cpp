@@ -125,8 +125,10 @@ Vector3 Renderer::traceRay(Ray &ray, f32 tmin, i32 bounces, f32 weight, f32 inde
         return {0.0, 0.0, 0.0};
     }
 
+    Ray iRay = ray;
+
     /* check for ray intersection with scene m_objects */
-    bool miss = s_scene.intersect(ray, hit, tmin, m_Far);
+    bool miss = s_scene.intersect(iRay, hit, tmin, m_Far);
     if(!miss) {
         return {0.0, 0.0, 0.0};
     }

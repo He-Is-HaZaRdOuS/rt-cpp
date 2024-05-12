@@ -35,16 +35,6 @@ Group collectScene(const json &data);
 std::vector<PhongMaterial> collectMaterial(const json &data);
 
 int main() {
-    /* Start timer to measure program running time */
-    //Timer timer;
-/*
-    Vector3 up = Vector3(0, 1, 0);
-    Vector3 normal = Vector3(0, 0.8, 0.6);
-
-    std::cout << reflect(up, normal);
-
-    return 0;
-    */
     /* JSON filenames are provided without the extension */
     std::string file1 = "scene1_exponent_variations";
     std::string file2 = "scene2_plane_sphere";
@@ -52,6 +42,7 @@ int main() {
     std::string file4 = "scene4_reflective_sphere";
     std::string file5 = "scene5_transparent_sphere";
     std::string file6 = "scene6_transparent_sphere2";
+    std::string file7 = "scene7_squashed_rotated_sphere";
 
     /* Construct necessary m_objects */
     std::shared_ptr<Camera> camera_ptr;
@@ -61,10 +52,10 @@ int main() {
     Timer timer;
 
     /* init m_objects and render scenes */
-
+/*
     init(renderer, camera_ptr,  file1);
     renderer.Render(file1, camera_ptr,  2, 40, true);
-/*
+
     init(renderer, camera_ptr,  file2);
     renderer.Render(file2, camera_ptr,  2, 40, true);
 
@@ -75,11 +66,10 @@ int main() {
     renderer.Render(file4, camera_ptr, 2, 8, true);
 */
     init(renderer, camera_ptr, file5);
-    renderer.Render(file5, camera_ptr, 0, 40, true);
+    renderer.Render(file5, camera_ptr, 2, 40, true);
 
     init(renderer, camera_ptr, file6);
     renderer.Render(file6, camera_ptr, 2, 40, true);
-
 
     std::cout << "STOPPING GLOBAL TIMER!!!" << std::endl;
     timer.Stop();

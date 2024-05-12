@@ -1,5 +1,4 @@
 #include "Geometry/Triangle.h"
-
 #include <cmath>
 
 bool Triangle::intersect(Ray& ray, Hit &hit, const f32 tmin, const f32 tmax) const {
@@ -61,7 +60,6 @@ bool Triangle::intersect(Ray& ray, Hit &hit, const f32 tmin, const f32 tmax) con
     // Calculate the point of intersection
     Vector4 intersection_point = ray.m_origin + ray.m_direction * t;
     hit.m_Point = intersection_point.getVec3();
-    //hit.m_Point.normalize();
     // set hit material index to sphere material index
     hit.m_MaterialIndex = m_MaterialIndex;
     hit.set_normal(m_normal);

@@ -1,5 +1,4 @@
 #include "Geometry/Sphere.h"
-
 #include <cmath>
 
 bool Sphere::intersect(Ray &ray, Hit& hit, const f32 tmin, const f32 tmax) const {
@@ -12,7 +11,6 @@ bool Sphere::intersect(Ray &ray, Hit& hit, const f32 tmin, const f32 tmax) const
 
     /* if discriminant is less than 0, ray didn't hit object, so do nothing */
     if(discriminant < 0.0f) {
-        //std::cout << "no";
         return false;
     }
 
@@ -24,7 +22,6 @@ bool Sphere::intersect(Ray &ray, Hit& hit, const f32 tmin, const f32 tmax) const
     const f32 t0 = (-b - sqrtd) / (2.0f * a);
     const f32 t1 = (-b + sqrtd) / (2.0f * a);
     f32 t;
-
 
     if(t0 > 0 && t1 > 0) {
         t = (t0 < t1) ? t0 : t1;
@@ -48,12 +45,10 @@ bool Sphere::intersect(Ray &ray, Hit& hit, const f32 tmin, const f32 tmax) const
     // Calculate the point of intersection
     Vector4 intersection_point = ray.m_origin + ray.m_direction * t;
     hit.m_Point = intersection_point.getVec3();
-    //hit.m_Point.normalize();
 
     // Calculate the hit normal
     Vector4 hit_normal = (intersection_point - m_center) * (1/m_radius);
 
-    //hit_normal = hit_normal * 0.5 + 0.5;
 
     // Set the hit normal
     hit.set_normal(hit_normal);
