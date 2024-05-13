@@ -1,7 +1,7 @@
 #include "Geometry/Triangle.h"
 #include <cmath>
 
-bool Triangle::intersect(Ray& ray, Hit &hit, const f32 tmin, const f32 tmax) const {
+bool Triangle::intersect(Ray ray, Hit &hit, const f32 tmin, const f32 tmax) const {
     // compute the plane's normal
     const Vector4 v0v1 = m_v2 - m_v1;
     const Vector4 v0v2 = m_v3 - m_v1;
@@ -67,4 +67,18 @@ bool Triangle::intersect(Ray& ray, Hit &hit, const f32 tmin, const f32 tmax) con
     hit.m_Id = m_Id;
     hit.m_OutwardNormal = ray.m_direction.dot(hit.m_Normal) < 0;
     return true;
+}
+
+void Triangle::shift(const Vector4 &offset) {
+    f32 w1 = m_v1.get_w();
+    f32 w2 = m_v2.get_w();
+    f32 w3 = m_v3.get_w();
+
+    m_v1 = m_v1 + offset;
+    m_v2 = m_v2 + offset;
+    m_v3 = m_v3 + offset;
+
+    m_v1.set_w(w1);
+    m_v2.set_w(w2);
+    m_v3.set_w(w3);
 }

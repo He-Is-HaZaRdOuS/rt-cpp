@@ -1,6 +1,6 @@
 #include "Geometry/Plane.h"
 
-bool Plane::intersect(Ray &ray, Hit &hit, const f32 tmin, const f32 tmax) const {
+bool Plane::intersect(Ray ray, Hit &hit, const f32 tmin, const f32 tmax) const {
     const Vector4 normal4 = Vector4(m_normal.get_x(), m_normal.get_y(), m_normal.get_z(), 1);
     if(ray.m_direction.dot(normal4) == 0.0) {
         return false;
@@ -24,4 +24,8 @@ bool Plane::intersect(Ray &ray, Hit &hit, const f32 tmin, const f32 tmax) const 
     hit.m_Id = m_Id;
     hit.m_OutwardNormal = ray.m_direction.dot(hit.m_Normal) < 0;
     return true;
+}
+
+void Plane::shift(const Vector4 &offset) {
+    /*nothing*/
 }

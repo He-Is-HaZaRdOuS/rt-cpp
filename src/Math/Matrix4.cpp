@@ -89,8 +89,8 @@ Matrix4 Matrix4::RotateX(const f32 angle)
 	const f32 radc = static_cast<f32>(cos(rad));
 	const f32 rads = static_cast<f32>(sin(rad));
 	tmp.m_data[1][1] = radc;
-	tmp.m_data[1][2] = rads;
 	tmp.m_data[2][1] = -rads;
+	tmp.m_data[1][2] = rads;
 	tmp.m_data[2][2] = radc;
 	return tmp;
 }
@@ -102,8 +102,8 @@ Matrix4 Matrix4::RotateY(const f32 angle)
 	const f32 radc = static_cast<f32>(cos(rad));
 	const f32 rads = static_cast<f32>(sin(rad));
 	tmp.m_data[0][0] = radc;
-	tmp.m_data[0][2] = -rads;
 	tmp.m_data[2][0] = rads;
+	tmp.m_data[0][2] = -rads;
 	tmp.m_data[2][2] = radc;
 	return tmp;
 }
@@ -115,8 +115,8 @@ Matrix4 Matrix4::RotateZ(const f32 angle)
 	const f32 radc = static_cast<f32>(cos(rad));
 	const f32 rads = static_cast<f32>(sin(rad));
 	tmp.m_data[0][0] = radc;
-	tmp.m_data[0][1] = rads;
 	tmp.m_data[1][0] = -rads;
+	tmp.m_data[0][1] = rads;
 	tmp.m_data[1][1] = radc;
 	return tmp;
 }
@@ -132,7 +132,7 @@ Matrix4 Matrix4::Rotate(f32 x, f32 y, f32 z, const f32 angle)
 	const f32 normalizer = static_cast<f32>(1.0 / sqrt(x * x + y * y + z * z));
 	x = x * normalizer;
 	y = y * normalizer;
-	z = z / normalizer;
+	z = z * normalizer;
 
 	const f32 tx = t * x;
 	const f32 ty = t * y;

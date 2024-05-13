@@ -12,8 +12,9 @@ public:
         m_object = object;
     }
     ~Transform() override = default;
-    bool intersect(Ray &ray, Hit& hit, f32 tmin, f32 tmax) const override;
+    bool intersect(Ray ray, Hit& hit, f32 tmin, f32 tmax) const override;
     void id() override {std::cout<<"Transform\n";};
+    void shift(const Vector4& offset) override;
 
     Matrix4 m_transform = Matrix4();
     Matrix4 m_translate = Matrix4();
@@ -22,5 +23,7 @@ public:
     Matrix4 m_rotatez = Matrix4();
     Matrix4 m_scale = Matrix4();
     Matrix4 m_transform_normal = Matrix4();
+    Vector4 m_translateOffset = Vector4();
+    Vector4 m_scaleOffset = Vector4();
     std::shared_ptr<Object3D> m_object;
 };

@@ -34,7 +34,7 @@ public:
 	friend Matrix4 operator*(const Matrix4& self, const Matrix4& other);
 	friend Vector4 operator*(const Matrix4& self, const Vector4& other);
 	friend bool operator==(const Matrix4&self, const Matrix4& other);
-	f32 m_data[4][4];
+	f32 m_data[4][4]{};
 private:
 
 };

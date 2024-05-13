@@ -1,7 +1,7 @@
 #include "Geometry/Sphere.h"
 #include <cmath>
 
-bool Sphere::intersect(Ray &ray, Hit& hit, const f32 tmin, const f32 tmax) const {
+bool Sphere::intersect(Ray ray, Hit& hit, const f32 tmin, const f32 tmax) const {
 
     const Vector4 offset = m_center - ray.m_origin;
     const f32 a = ray.m_direction.dot(ray.m_direction);
@@ -56,4 +56,10 @@ bool Sphere::intersect(Ray &ray, Hit& hit, const f32 tmin, const f32 tmax) const
     hit.m_Id = m_Id;
     hit.m_OutwardNormal = ray.m_direction.dot(hit.m_Normal) < 0;
     return true;
+}
+
+void Sphere::shift(const Vector4 &offset) {
+    f32 w = m_center.get_w();
+    m_center = offset;
+    m_center.set_w(w);
 }

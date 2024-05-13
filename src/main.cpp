@@ -52,7 +52,7 @@ int main() {
     Timer timer;
 
     /* init m_objects and render scenes */
-
+/*
     init(renderer, camera_ptr,  file1);
     renderer.Render(file1, camera_ptr,  2, 40, true);
 
@@ -61,7 +61,7 @@ int main() {
 
     init(renderer, camera_ptr, file3);
     renderer.Render(file3, camera_ptr, 2, 40, true);
-
+*/
     init(renderer, camera_ptr, file4);
     renderer.Render(file4, camera_ptr, 2, 8, true);
 
@@ -70,10 +70,10 @@ int main() {
 
     init(renderer, camera_ptr, file6);
     renderer.Render(file6, camera_ptr, 2, 40, true);
-
+/*
     init(renderer, camera_ptr, file7);
     renderer.Render(file7, camera_ptr, 2, 40, true);
-
+*/
     std::cout << "STOPPING GLOBAL TIMER!!!" << std::endl;
     timer.Stop();
 
@@ -413,7 +413,9 @@ Group collectScene(const json &data) {
                                         buffer[index++] = p;
                                     }
                                     Matrix4 t = Matrix4::Translate(buffer[0], buffer[1], buffer[2]);
+                                    Vector4 v = Vector4(buffer[0], buffer[1], buffer[2]);
                                     t0->m_translate = t;
+                                    t0->m_translateOffset = v;
                                 }
 
                                 if(transformations.contains("zrotate")) {
@@ -446,14 +448,14 @@ Group collectScene(const json &data) {
                                     }
                                     Matrix4 t = Matrix4::Scale(buffer[0], buffer[1], buffer[2]);
                                     t0->m_scale = t;
-                                    //std::cout << *scale;
+                                    t0->m_scaleOffset = Vector4(buffer[0], buffer[1], buffer[2]);
                                 }
                                 // SRT
                                 t0->m_transform = t0->m_transform.mult(t0->m_scale);
                                 t0->m_transform = t0->m_transform.mult(t0->m_rotatex);
                                 t0->m_transform = t0->m_transform.mult(t0->m_rotatey);
                                 t0->m_transform = t0->m_transform.mult(t0->m_rotatez);
-                                t0->m_transform = t0->m_transform.mult(t0->m_translate);
+                                //t0->m_transform = t0->m_transform.mult(t0->m_translate);
 
                                 t0->m_transform = t0->m_transform.inverse();
                                 t0->m_transform_normal = t0->m_transform.transpose();

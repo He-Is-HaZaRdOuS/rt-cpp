@@ -2,7 +2,7 @@
 #include <complex>
 #include "Geometry/Sphere.h"
 
-bool Group::intersect(Ray& ray, Hit& hit, const f32 tmin, const f32 tmax) const {
+bool Group::intersect(Ray ray, Hit& hit, const f32 tmin, const f32 tmax) const {
     for(auto const& obj : m_objects) {
         obj->intersect(ray, hit, tmin, tmax);
     }
@@ -19,4 +19,8 @@ bool Group::inShadow(Ray& ray, Hit &hit, Hit& mainHit, f32 tmin, f32 tmax) const
         }
     }
     return false;
+}
+
+void Group::shift(const Vector4 &offset) {
+    /*nothing*/
 }

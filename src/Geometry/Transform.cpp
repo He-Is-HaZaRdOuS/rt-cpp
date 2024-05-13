@@ -1,6 +1,6 @@
 #include "Geometry/Transform.h"
 
-bool Transform::intersect(Ray &ray, Hit &hit, const f32 tmin, const f32 tmax) const {
+bool Transform::intersect(Ray ray, Hit &hit, const f32 tmin, const f32 tmax) const {
     ray.m_origin = m_transform.mult(ray.m_origin);
     ray.m_direction = m_transform.mult(ray.m_direction);
     if(m_object->intersect(ray, hit, tmin, tmax)) {
@@ -12,5 +12,10 @@ bool Transform::intersect(Ray &ray, Hit &hit, const f32 tmin, const f32 tmax) co
         hit.m_Id = m_Id;
         hit.m_OutwardNormal = ray.m_direction.dot(hit.m_Normal) < 0;
     }
+    m_object->shift(m_translateOffset);
     return hit.didHit;
+}
+
+void Transform::shift(const Vector4 &offset) {
+    /*nothing*/
 }

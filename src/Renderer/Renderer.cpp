@@ -8,6 +8,7 @@
 #include "Utilities/Timer.h"
 //#include "PinnedVector.h"
 #include <cmath>
+#include <random>
 #include <Material/PhongMaterial.h>
 
 Vector3 Renderer::s_BackgroundColor;
@@ -44,12 +45,25 @@ inline Vector3 reflect(const Vector3& I, const Vector3& N) {
     return I - 2 * I.dot(N) * N;
 }
 
-inline Vector3 refract(const Vector3& V, const Vector3& n, f32 etai_over_etat) {
+inline Vector3 refract(const Vector3& V, const Vector3& N, f32 etai_over_etat) {
     Vector3 uv = -V;
-    f32 cos_theta = fmin(uv.dot(n), 1.0);
-    Vector3 r_out_perp =  etai_over_etat * (uv + cos_theta*n);
-    Vector3 r_out_parallel = -sqrtf(fabs(1.0 - r_out_perp.length2())) * n;
+    f32 cos_theta = fmin(uv.dot(N), 1.0);
+    Vector3 r_out_perp =  etai_over_etat * (uv + cos_theta * N);
+    Vector3 r_out_parallel = -sqrtf(std::fabs(1.0 - r_out_perp.length2())) * N;
     return r_out_perp + r_out_parallel;
+}
+
+inline f32 reflectance(f32 cosine, f32 refraction_index) {
+    // Use Schlick's approximation for reflectance.
+    f32 r0 = (1 - refraction_index) / (1 + refraction_index);
+    r0 = r0*r0;
+    return r0 + (1-r0)*powf((1 - cosine),5);
+}
+
+inline f32 random_float() {
+    static std::uniform_real_distribution<double> distribution(0.0, 1.0);
+    static std::mt19937 generator;
+    return static_cast<f32>(distribution(generator));
 }
 
 void Renderer::Render(const std::string& filename, const std::shared_ptr<Camera>& camera, f32 near, f32 far, bool monochrome) {
@@ -152,30 +166,34 @@ Vector3 Renderer::traceRay(Ray &ray, f32 tmin, i32 bounces, f32 weight, f32 inde
         /* Reflective Object */
         if(material.m_IsReflective) {
             Vector3 reflectVector = reflect(ray.m_direction.getVec3(), hit.m_Normal);
-            Ray reflectRay = Ray(hit.m_Point + hit.m_Normal * 0.00001, reflectVector);
+            Ray reflectRay = Ray(hit.m_Point + hit.m_Normal * 0.0001, reflectVector);
             Hit reflectHit = Hit();
             rgb = rgb + material.m_ReflectiveColor * traceRay(reflectRay, FLT_EPSILON, bounces-1, weight, material.m_IndexOfRefraction, reflectHit);
         }
 
         /* Transparent Object */
+
         if(material.m_IsTransparent) {
             f32 correctedRefractionIndex = hit.m_OutwardNormal ? (1.0f/material.m_IndexOfRefraction) : material.m_IndexOfRefraction;
             Vector3 transmittanceDirection = ray.m_direction.getVec3();
-            transmittanceDirection.normalize();
             Vector3 nTransmittanceDirection = -transmittanceDirection;
+            transmittanceDirection.normalize();
+            nTransmittanceDirection.normalize();
 
             f32 cos_theta = fmin(nTransmittanceDirection.dot(hit.m_Normal), 1.0);
-            f32 sin_theta = sqrt(1.0 - cos_theta*cos_theta);
+            f32 sin_theta = sqrtf(1.0f - cos_theta*cos_theta);
 
-            bool canRefract = correctedRefractionIndex * sin_theta > 1.0;
+            bool canRefract = sin_theta > correctedRefractionIndex;
             Vector3 refractedVector;
 
-            if(!canRefract) {
+            if(!canRefract || reflectance(cos_theta, correctedRefractionIndex) > random_float()) {
                 refractedVector = reflect(transmittanceDirection, hit.m_Normal);
             }
             else {
                 refractedVector = refract(transmittanceDirection, hit.m_Normal, correctedRefractionIndex);
             }
+
+            refractedVector.normalize();
 
             Ray transmittedRay = Ray(hit.m_Point, refractedVector);
             Hit transmittedHit = Hit();
