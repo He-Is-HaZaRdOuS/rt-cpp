@@ -7,7 +7,7 @@ Vector4::Vector4()
 	m_data[0] = 0.0;
 	m_data[1] = 0.0;
 	m_data[2] = 0.0;
-	m_data[3] = 1.0;
+	m_data[3] = 0.0;
 }
 
 Vector4::Vector4(const f32 f1, const f32 f2, const f32 f3)
@@ -138,4 +138,16 @@ Vector4 operator-(const Vector4 &self, f32 other) {
 
 Vector4 operator-(const Vector4 &self) {
 	return {-self.m_data[0], -self.m_data[1], -self.m_data[2], -self.m_data[3]};
+}
+
+Vector4 operator/(const Vector4 &self, f32 other) {
+	return {self.m_data[0] / other, self.m_data[1] / other, self.m_data[2] / other, self.m_data[3]};
+}
+
+bool operator!=(const Vector4 &self, const Vector4 &other) {
+	return !(self == other);
+}
+
+bool operator==(const Vector4 &self, const Vector4 &other) {
+	return (self.m_data[0] == other.m_data[0] && self.m_data[1] == other.m_data[1] && self.m_data[2] == other.m_data[2] && self.m_data[3] == other.m_data[3]);
 }

@@ -6,7 +6,7 @@
 #include "Libs/stb_image_write.h"
 #include "Geometry/Sphere.h"
 #include "Utilities/Timer.h"
-#include "PinnedVector.h"
+//#include "PinnedVector.h"
 #include <cmath>
 #include <Material/PhongMaterial.h>
 
@@ -95,7 +95,7 @@ void Renderer::s_save(const std::string& path, bool monochrome) const {
 inline void Renderer::s_fragment(const f32 x, const f32 y, const u32 nx, const u32 ny, bool monochrome, const std::shared_ptr<Camera>& camera, Hit hit) {
     Ray ray = camera->generateRay(x, y);
 
-    Vector3 pixelColor = traceRay(ray, m_Near, 2, 1.0,1.0, hit);
+    Vector3 pixelColor = traceRay(ray, m_Near, 3, 1.0,1.0, hit);
     pixelColor.clamp();
 
     /* if no hit, draw background colors */

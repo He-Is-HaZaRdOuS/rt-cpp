@@ -52,7 +52,7 @@ int main() {
     Timer timer;
 
     /* init m_objects and render scenes */
-/*
+
     init(renderer, camera_ptr,  file1);
     renderer.Render(file1, camera_ptr,  2, 40, true);
 
@@ -64,7 +64,7 @@ int main() {
 
     init(renderer, camera_ptr, file4);
     renderer.Render(file4, camera_ptr, 2, 8, true);
-*/
+
     init(renderer, camera_ptr, file5);
     renderer.Render(file5, camera_ptr, 2, 40, true);
 

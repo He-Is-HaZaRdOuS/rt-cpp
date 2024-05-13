@@ -59,11 +59,18 @@ Matrix4 Matrix4::Zero()
 
 Matrix4 Matrix4::Translate(const f32 tx,const f32 ty,const f32 tz)
 {
-	Matrix4 tmp = Matrix4();
-	tmp.m_data[0][3] = tx;
-	tmp.m_data[1][3] = ty;
-	tmp.m_data[2][3] = tz;
-	return tmp;
+	Matrix4 translationMatrix;
+
+	translationMatrix.m_data[0][0] = 1.0f;
+	translationMatrix.m_data[1][1] = 1.0f;
+	translationMatrix.m_data[2][2] = 1.0f;
+	translationMatrix.m_data[3][3] = 1.0f;
+
+	translationMatrix.m_data[0][3] = tx;
+	translationMatrix.m_data[1][3] = ty;
+	translationMatrix.m_data[2][3] = tz;
+
+	return translationMatrix;
 }
 
 Matrix4 Matrix4::Scale(const f32 sx,const f32 sy,const f32 sz)
@@ -328,4 +335,12 @@ Matrix4 Matrix4::transpose() const {
     }
 
     return tmp;
+}
+
+bool operator==(const Matrix4 &self, const Matrix4 &other) {
+	bool r1 = (self.m_data[0][0] == other.m_data[0][0] && self.m_data[0][1] == other.m_data[0][1] && self.m_data[0][2] == other.m_data[0][2] && self.m_data[0][3] == other.m_data[0][3]);
+	bool r2 = (self.m_data[1][0] == other.m_data[1][0] && self.m_data[1][1] == other.m_data[1][1] && self.m_data[1][2] == other.m_data[1][2] && self.m_data[1][3] == other.m_data[1][3]);
+	bool r3 = (self.m_data[2][0] == other.m_data[2][0] && self.m_data[2][1] == other.m_data[2][1] && self.m_data[2][2] == other.m_data[2][2] && self.m_data[2][3] == other.m_data[2][3]);
+	bool r4 = (self.m_data[3][0] == other.m_data[3][0] && self.m_data[3][1] == other.m_data[3][1] && self.m_data[3][2] == other.m_data[3][2] && self.m_data[3][3] == other.m_data[3][3]);
+	return r1 && r2 && r3 && r4;
 }

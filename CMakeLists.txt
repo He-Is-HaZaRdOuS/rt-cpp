@@ -3,7 +3,7 @@ project(Beam-Pursuit VERSION 0.1.0)
 #set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_CXX_STANDARD 17)
 
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/pinnedVector")
+#add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/pinnedVector")
 
 # Define MY_SOURCES to be a list of all the source files for my project
 file(GLOB_RECURSE MY_SOURCES CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/src/**.cpp")

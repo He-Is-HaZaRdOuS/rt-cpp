@@ -54,6 +54,9 @@ public:
     friend Vector4 operator+(const Vector4& self, f32 other);
     friend Vector4 operator-(const Vector4& self, f32 other);
 	friend Vector4 operator-(const Vector4& self);
+	friend Vector4 operator/(const Vector4 &self, f32 other);
+	friend bool operator!=(const Vector4 &self, const Vector4 & other);
+	friend bool operator==(const Vector4 &self, const Vector4 & other);
 
 private:
 	f32 m_data[4];

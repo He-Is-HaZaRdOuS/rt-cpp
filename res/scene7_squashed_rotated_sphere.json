@@ -18,6 +18,9 @@
 			"transform" : {
 				"transformations" : [
 					{
+						"translate" : [0.5, 0, 0]
+					},
+					{
 						"zrotate" : 45
 					},
 					{

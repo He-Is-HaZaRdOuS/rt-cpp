@@ -33,7 +33,8 @@ public:
 	friend std::ostream& operator<<(std::ostream& os, const Matrix4& matrix);
 	friend Matrix4 operator*(const Matrix4& self, const Matrix4& other);
 	friend Vector4 operator*(const Matrix4& self, const Vector4& other);
-
-private:
+	friend bool operator==(const Matrix4&self, const Matrix4& other);
 	f32 m_data[4][4];
+private:
+
 };
