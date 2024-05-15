@@ -145,7 +145,7 @@ Vector4 operator-(const Vector4 &self) {
 }
 
 Vector4 operator/(const Vector4 &self, f32 other) {
-	return {self.m_data[0] / other, self.m_data[1] / other, self.m_data[2] / other, self.m_data[3]};
+	return {self.m_data[0] / other, self.m_data[1] / other, self.m_data[2] / other, self.m_data[3] / other};
 }
 
 bool operator!=(const Vector4 &self, const Vector4 &other) {

@@ -15,6 +15,10 @@ public:
 
 	~Matrix4() = default;
 
+	static Matrix4 Col(f32 f1, f32 f2, f32 f3, f32 f4,
+			f32 f5, f32 f6, f32 f7, f32 f8,
+			f32 f9, f32 f10, f32 f11, f32 f12,
+			f32 f13, f32 f14, f32 f15, f32 f16);
 	static Matrix4 Zero();
 	static Matrix4 Translate(f32 tx, f32 ty, f32 tz);
 	static Matrix4 Scale(f32 sx, f32 sy, f32 sz);

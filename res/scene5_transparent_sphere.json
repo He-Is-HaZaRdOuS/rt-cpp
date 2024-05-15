@@ -21,15 +21,12 @@
 			"transform" : {
 				"transformations" : [
 					{
-						"translate" : [1, 0.8, -3]
-					},
-					{
 						"scale" : [0.3, 1.8, 0.3]
 					}
 				],
 				"object" : {
 					"sphere" : {
-						"center" : [0, 0, 0],
+						"center" : [3, 0.5, -9],
 						"radius" : 1,
 						"material" : 1
 					}
@@ -40,15 +37,12 @@
 			"transform" : {
 				"transformations" : [
 					{
-						"translate" : [0, 0.8, -3]
-					},
-					{
 						"scale" : [0.3, 1.8, 0.3]
 					}
 				],
 				"object" : {
 					"sphere" : {
-						"center" : [0, 0, 0],
+						"center" : [0, 0.5, -9],
 						"radius" : 1,
 						"material" : 2
 					}
@@ -59,15 +53,12 @@
 			"transform" : {
 				"transformations" : [
 					{
-						"translate" : [-1, 0.8, -3]
-					},
-					{
 						"scale" : [0.3, 1.8, 0.3]
 					}
 				],
 				"object" : {
 					"sphere" : {
-						"center" : [0, 0, 0],
+						"center" : [-3, 0.5, -9],
 						"radius" : 1,
 						"material" : 3
 					}

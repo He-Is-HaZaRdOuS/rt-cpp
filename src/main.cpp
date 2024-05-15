@@ -1,5 +1,7 @@
+#include <cmath>
 #include <iostream>
 #include <Material/PhongMaterial.h>
+#define DOCTEST_CONFIG_IMPLEMENT
 
 #include "Utilities/Macros.h"
 #include "Utilities/Timer.h"
@@ -22,6 +24,7 @@
 #include "Renderer/Image.h"
 #include "Renderer/Renderer.h"
 #include "Renderer/Light.h"
+#include "Doctest/doctest.h"
 
 inline Vector3 reflect(const Vector3& I, const Vector3& N) {
     return N * 2 * I.dot(N) - I;
@@ -34,7 +37,65 @@ std::vector<DirectionalLight> collectLight(const json &data);
 Group collectScene(const json &data);
 std::vector<PhongMaterial> collectMaterial(const json &data);
 
+void testTranspose() {
+    Matrix4 mat(1.0, 2.0, 3.0, 4.0,
+                5.0, 6.0, 7.0, 8.0,
+                9.0, 10.0, 11.0, 12.0,
+                13.0, 14.0, 15.0, 16.0);
+
+    Matrix4 transposed = mat.transpose();
+
+    Matrix4 expectedTransposed(1.0, 5.0, 9.0, 13.0,
+                               2.0, 6.0, 10.0, 14.0,
+                               3.0, 7.0, 11.0, 15.0,
+                               4.0, 8.0, 12.0, 16.0);
+
+    if (transposed == expectedTransposed) {
+        std::cout << "Transpose test passed." << std::endl;
+    } else {
+        std::cout << "Transpose test failed." << std::endl;
+        std::cout << "Expected: " << expectedTransposed << std::endl;
+        std::cout << "Got: " << transposed << std::endl;
+    }
+}
+
+void testInverse() {
+    Matrix4 mat(4.0, 7.0, 2.0, 3.0,
+                3.0, 6.0, 1.0, 2.0,
+                2.0, 5.0, 1.0, 1.0,
+                1.0, 4.0, 0.0, 1.0);
+
+
+    try {
+        Matrix4 inversed = mat.inverse();
+
+        // Known inverse of the matrix above calculated using an external tool
+        Matrix4 expectedInversed(-1.0, 1.0, 1.0, -1.0,
+                                  2.0, -2.0, -1.0, 2.0,
+                                  -1.0, 2.0, 1.0, -2.0,
+                                  0.0, -1.0, 0.0, 1.0);
+
+        if (inversed == expectedInversed) {
+            std::cout << "Inverse test passed." << std::endl;
+        } else {
+            std::cout << "Inverse test failed." << std::endl;
+            std::cout << "Expected: " << expectedInversed << std::endl;
+            std::cout << "Got: " << inversed << std::endl;
+        }
+    } catch (const std::runtime_error& e) {
+        std::cout << "Inverse test failed with exception: " << e.what() << std::endl;
+    }
+}
+
 int main() {
+
+/*
+    doctest::Context context;
+
+    const int res = context.run();
+
+    return res;
+*/
     /* JSON filenames are provided without the extension */
     std::string file1 = "scene1_exponent_variations";
     std::string file2 = "scene2_plane_sphere";
@@ -42,7 +103,6 @@ int main() {
     std::string file4 = "scene4_reflective_sphere";
     std::string file5 = "scene5_transparent_sphere";
     std::string file6 = "scene6_transparent_sphere2";
-    std::string file7 = "scene7_squashed_rotated_sphere";
 
     /* Construct necessary m_objects */
     std::shared_ptr<Camera> camera_ptr;
@@ -52,7 +112,7 @@ int main() {
     Timer timer;
 
     /* init m_objects and render scenes */
-/*
+
     init(renderer, camera_ptr,  file1);
     renderer.Render(file1, camera_ptr,  2, 40, true);
 
@@ -61,7 +121,7 @@ int main() {
 
     init(renderer, camera_ptr, file3);
     renderer.Render(file3, camera_ptr, 2, 40, true);
-*/
+
     init(renderer, camera_ptr, file4);
     renderer.Render(file4, camera_ptr, 2, 8, true);
 
@@ -70,10 +130,7 @@ int main() {
 
     init(renderer, camera_ptr, file6);
     renderer.Render(file6, camera_ptr, 2, 40, true);
-/*
-    init(renderer, camera_ptr, file7);
-    renderer.Render(file7, camera_ptr, 2, 40, true);
-*/
+
     std::cout << "STOPPING GLOBAL TIMER!!!" << std::endl;
     timer.Stop();
 
@@ -451,11 +508,12 @@ Group collectScene(const json &data) {
                                     t0->m_scaleOffset = Vector4(buffer[0], buffer[1], buffer[2]);
                                 }
                                 // SRT
+
                                 t0->m_transform = t0->m_transform.mult(t0->m_scale);
                                 t0->m_transform = t0->m_transform.mult(t0->m_rotatex);
                                 t0->m_transform = t0->m_transform.mult(t0->m_rotatey);
                                 t0->m_transform = t0->m_transform.mult(t0->m_rotatez);
-                                //t0->m_transform = t0->m_transform.mult(t0->m_translate);
+                                t0->m_transform = t0->m_transform.mult(t0->m_translate);
 
                                 t0->m_transform = t0->m_transform.inverse();
                                 t0->m_transform_normal = t0->m_transform.transpose();

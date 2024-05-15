@@ -163,34 +163,29 @@ Vector3 Renderer::traceRay(Ray &ray, f32 tmin, i32 bounces, f32 weight, f32 inde
             rgb = rgb + material.shade(ray, hit, light);
         }
 
-        /* Reflective Object */
-        if(material.m_IsReflective) {
-            Vector3 reflectVector = reflect(ray.m_direction.getVec3(), hit.m_Normal);
-            Ray reflectRay = Ray(hit.m_Point + hit.m_Normal * 0.0001, reflectVector);
-            Hit reflectHit = Hit();
-            rgb = rgb + material.m_ReflectiveColor * traceRay(reflectRay, FLT_EPSILON, bounces-1, weight, material.m_IndexOfRefraction, reflectHit);
-        }
+        Vector3 correctedNormal = hit.m_Normal;
 
         /* Transparent Object */
-
         if(material.m_IsTransparent) {
             f32 correctedRefractionIndex = hit.m_OutwardNormal ? (1.0f/material.m_IndexOfRefraction) : material.m_IndexOfRefraction;
+            correctedNormal = hit.m_OutwardNormal ? (hit.m_Normal) : -hit.m_Normal;
             Vector3 transmittanceDirection = ray.m_direction.getVec3();
             Vector3 nTransmittanceDirection = -transmittanceDirection;
             transmittanceDirection.normalize();
             nTransmittanceDirection.normalize();
 
-            f32 cos_theta = fmin(nTransmittanceDirection.dot(hit.m_Normal), 1.0);
-            f32 sin_theta = sqrtf(1.0f - cos_theta*cos_theta);
+            f32 totalInternalReflection = sqrtf(1 - (correctedRefractionIndex*correctedRefractionIndex) * (1 - powf(hit.m_Normal.dot(ray.m_direction.getVec3()), 2.0f)));
 
-            bool canRefract = sin_theta > correctedRefractionIndex;
+            //f32 cos_theta = fmin(nTransmittanceDirection.dot(hit.m_Normal), 1.0);
+            bool canRefract = totalInternalReflection > 0.0f;
             Vector3 refractedVector;
 
-            if(!canRefract || reflectance(cos_theta, correctedRefractionIndex) > random_float()) {
+            // Hollow glass sphere -> || reflectance(cos_theta, correctedRefractionIndex) > random_float()
+            if(!canRefract) {
                 refractedVector = reflect(transmittanceDirection, hit.m_Normal);
             }
             else {
-                refractedVector = refract(transmittanceDirection, hit.m_Normal, correctedRefractionIndex);
+                refractedVector = (correctedRefractionIndex * (hit.m_Normal.dot(ray.m_direction.getVec3())) - totalInternalReflection) * hit.m_Normal - correctedRefractionIndex * ray.m_direction.getVec3();
             }
 
             refractedVector.normalize();
@@ -198,6 +193,14 @@ Vector3 Renderer::traceRay(Ray &ray, f32 tmin, i32 bounces, f32 weight, f32 inde
             Ray transmittedRay = Ray(hit.m_Point, refractedVector);
             Hit transmittedHit = Hit();
             rgb = rgb + material.m_TransparentColor * traceRay(transmittedRay, FLT_EPSILON, bounces-1, weight, material.m_IndexOfRefraction, transmittedHit);
+        }
+
+        /* Reflective Object */
+        if(material.m_IsReflective) {
+            Vector3 reflectVector = reflect(ray.m_direction.getVec3(), hit.m_Normal);
+            Ray reflectRay = Ray(hit.m_Point + correctedNormal * 0.0001, reflectVector);
+            Hit reflectHit = Hit();
+            rgb = rgb + material.m_ReflectiveColor * traceRay(reflectRay, FLT_EPSILON, bounces-1, weight, material.m_IndexOfRefraction, reflectHit);
         }
 
     }

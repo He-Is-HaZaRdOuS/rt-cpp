@@ -12,7 +12,7 @@ bool Transform::intersect(Ray ray, Hit &hit, const f32 tmin, const f32 tmax) con
         hit.m_Id = m_Id;
         hit.m_OutwardNormal = ray.m_direction.dot(hit.m_Normal) < 0;
     }
-    m_object->shift(m_translateOffset);
+    //m_object->shift(m_translateOffset);
     return hit.didHit;
 }
 

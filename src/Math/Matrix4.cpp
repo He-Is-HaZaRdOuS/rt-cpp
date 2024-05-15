@@ -47,6 +47,28 @@ Matrix4::Matrix4(const f32 f1, const f32 f2, const f32 f3, const f32 f4, const f
 	m_data[3][3] = f16;
 }
 
+Matrix4 Matrix4::Col(const f32 f1, const f32 f2, const f32 f3, const f32 f4, const f32 f5, const f32 f6, const f32 f7, const f32 f8, const f32 f9, const f32 f10, const f32 f11, const f32 f12, const f32 f13, const f32 f14, const f32 f15, const f32 f16)
+{
+	Matrix4 tmp = Matrix4();
+	tmp.m_data[0][0] = f1;
+	tmp.m_data[0][1] = f2;
+	tmp.m_data[0][2] = f3;
+	tmp.m_data[0][3] = f4;
+	tmp.m_data[1][0] = f5;
+	tmp.m_data[1][1] = f6;
+	tmp.m_data[1][2] = f7;
+	tmp.m_data[1][3] = f8;
+	tmp.m_data[2][0] = f9;
+	tmp.m_data[2][1] = f10;
+	tmp.m_data[2][2] = f11;
+	tmp.m_data[2][3] = f12;
+	tmp.m_data[3][0] = f13;
+	tmp.m_data[3][1] = f14;
+	tmp.m_data[3][2] = f15;
+	tmp.m_data[3][3] = f16;
+	return tmp;
+}
+
 Matrix4 Matrix4::Zero()
 {
 	Matrix4 tmp = Matrix4();
@@ -60,11 +82,6 @@ Matrix4 Matrix4::Zero()
 Matrix4 Matrix4::Translate(const f32 tx,const f32 ty,const f32 tz)
 {
 	Matrix4 translationMatrix;
-
-	translationMatrix.m_data[0][0] = 1.0f;
-	translationMatrix.m_data[1][1] = 1.0f;
-	translationMatrix.m_data[2][2] = 1.0f;
-	translationMatrix.m_data[3][3] = 1.0f;
 
 	translationMatrix.m_data[0][3] = tx;
 	translationMatrix.m_data[1][3] = ty;
@@ -84,13 +101,17 @@ Matrix4 Matrix4::Scale(const f32 sx,const f32 sy,const f32 sz)
 
 Matrix4 Matrix4::RotateX(const f32 angle)
 {
-	Matrix4 tmp = Matrix4();
+	Matrix4 tmp = Matrix4::Zero();
+	tmp.m_data[0][0] = 1.0;  // Set the diagonal to 1
+	tmp.m_data[3][3] = 1.0;  // Set the diagonal to 1
+
 	const f32 rad = static_cast<f32>(angle * M_PI / 180.0);
 	const f32 radc = static_cast<f32>(cos(rad));
 	const f32 rads = static_cast<f32>(sin(rad));
+
 	tmp.m_data[1][1] = radc;
-	tmp.m_data[2][1] = -rads;
-	tmp.m_data[1][2] = rads;
+	tmp.m_data[1][2] = -rads;
+	tmp.m_data[2][1] = rads;
 	tmp.m_data[2][2] = radc;
 	return tmp;
 }
@@ -102,8 +123,8 @@ Matrix4 Matrix4::RotateY(const f32 angle)
 	const f32 radc = static_cast<f32>(cos(rad));
 	const f32 rads = static_cast<f32>(sin(rad));
 	tmp.m_data[0][0] = radc;
-	tmp.m_data[2][0] = rads;
-	tmp.m_data[0][2] = -rads;
+	tmp.m_data[2][0] = -rads;
+	tmp.m_data[0][2] = rads;
 	tmp.m_data[2][2] = radc;
 	return tmp;
 }
@@ -115,8 +136,8 @@ Matrix4 Matrix4::RotateZ(const f32 angle)
 	const f32 radc = static_cast<f32>(cos(rad));
 	const f32 rads = static_cast<f32>(sin(rad));
 	tmp.m_data[0][0] = radc;
-	tmp.m_data[1][0] = -rads;
-	tmp.m_data[0][1] = rads;
+	tmp.m_data[1][0] = rads;
+	tmp.m_data[0][1] = -rads;
 	tmp.m_data[1][1] = radc;
 	return tmp;
 }
@@ -237,7 +258,52 @@ Vector4 operator*(const Matrix4& self, const Vector4& other)
 }
 
 Matrix4 Matrix4::inverse() const {
-	const f32 detr = det();
+
+f32 A2323 = m_data[2][2] * m_data[3][3] - m_data[2][3] * m_data[3][2];
+f32 A1323 = m_data[2][1] * m_data[3][3] - m_data[2][3] * m_data[3][1];
+f32 A1223 = m_data[2][1] * m_data[3][2] - m_data[2][2] * m_data[3][1];
+f32 A0323 = m_data[2][0] * m_data[3][3] - m_data[2][3] * m_data[3][0];
+f32 A0223 = m_data[2][0] * m_data[3][2] - m_data[2][2] * m_data[3][0];
+f32 A0123 = m_data[2][0] * m_data[3][1] - m_data[2][1] * m_data[3][0];
+f32 A2313 = m_data[1][2] * m_data[3][3] - m_data[1][3] * m_data[3][2];
+f32 A1313 = m_data[1][1] * m_data[3][3] - m_data[1][3] * m_data[3][1];
+f32 A1213 = m_data[1][1] * m_data[3][2] - m_data[1][2] * m_data[3][1];
+f32 A2312 = m_data[1][2] * m_data[2][3] - m_data[1][3] * m_data[2][2];
+f32 A1312 = m_data[1][1] * m_data[2][3] - m_data[1][3] * m_data[2][1];
+f32 A1212 = m_data[1][1] * m_data[2][2] - m_data[1][2] * m_data[2][1];
+f32 A0313 = m_data[1][0] * m_data[3][3] - m_data[1][3] * m_data[3][0];
+f32 A0213 = m_data[1][0] * m_data[3][2] - m_data[1][2] * m_data[3][0];
+f32 A0312 = m_data[1][0] * m_data[2][3] - m_data[1][3] * m_data[2][0];
+f32 A0212 = m_data[1][0] * m_data[2][2] - m_data[1][2] * m_data[2][0];
+f32 A0113 = m_data[1][0] * m_data[3][1] - m_data[1][1] * m_data[3][0];
+f32 A0112 = m_data[1][0] * m_data[2][1] - m_data[1][1] * m_data[2][0];
+
+f32 detr = m_data[0][0] * ( m_data[1][1] * A2323 - m_data[1][2] * A1323 + m_data[1][3] * A1223 )
+    - m_data[0][1] * ( m_data[1][0] * A2323 - m_data[1][2] * A0323 + m_data[1][3] * A0223 )
+    + m_data[0][2] * ( m_data[1][0] * A1323 - m_data[1][1] * A0323 + m_data[1][3] * A0123 )
+    - m_data[0][3] * ( m_data[1][0] * A1223 - m_data[1][1] * A0223 + m_data[1][2] * A0123 );
+detr = 1 / detr;
+
+return Col(
+   detr *   ( m_data[1][1] * A2323 - m_data[1][2] * A1323 + m_data[1][3] * A1223 ),
+   detr * - ( m_data[0][1] * A2323 - m_data[0][2] * A1323 + m_data[0][3] * A1223 ),
+   detr *   ( m_data[0][1] * A2313 - m_data[0][2] * A1313 + m_data[0][3] * A1213 ),
+   detr * - ( m_data[0][1] * A2312 - m_data[0][2] * A1312 + m_data[0][3] * A1212 ),
+   detr * - ( m_data[1][0] * A2323 - m_data[1][2] * A0323 + m_data[1][3] * A0223 ),
+   detr *   ( m_data[0][0] * A2323 - m_data[0][2] * A0323 + m_data[0][3] * A0223 ),
+   detr * - ( m_data[0][0] * A2313 - m_data[0][2] * A0313 + m_data[0][3] * A0213 ),
+   detr *   ( m_data[0][0] * A2312 - m_data[0][2] * A0312 + m_data[0][3] * A0212 ),
+   detr *   ( m_data[1][0] * A1323 - m_data[1][1] * A0323 + m_data[1][3] * A0123 ),
+   detr * - ( m_data[0][0] * A1323 - m_data[0][1] * A0323 + m_data[0][3] * A0123 ),
+   detr *   ( m_data[0][0] * A1313 - m_data[0][1] * A0313 + m_data[0][3] * A0113 ),
+   detr * - ( m_data[0][0] * A1312 - m_data[0][1] * A0312 + m_data[0][3] * A0112 ),
+   detr * - ( m_data[1][0] * A1223 - m_data[1][1] * A0223 + m_data[1][2] * A0123 ),
+   detr *   ( m_data[0][0] * A1223 - m_data[0][1] * A0223 + m_data[0][2] * A0123 ),
+   detr * - ( m_data[0][0] * A1213 - m_data[0][1] * A0213 + m_data[0][2] * A0113 ),
+   detr *   ( m_data[0][0] * A1212 - m_data[0][1] * A0212 + m_data[0][2] * A0112 ));
+
+	/////
+	//const f32 detr = det();
 
     Matrix4 tmp = Matrix4();
 
@@ -306,20 +372,20 @@ Matrix4 Matrix4::inverse() const {
                           m_data[2][0], m_data[2][1], m_data[2][2]);
 
     tmp.m_data[0][0] = m00.det()/detr;
-    tmp.m_data[0][1] = -m10.det()/detr;
-    tmp.m_data[0][2] = m20.det()/detr;
-    tmp.m_data[0][3] = -m30.det()/detr;
-    tmp.m_data[1][0] = -m01.det()/detr;
+    tmp.m_data[1][0] = -m10.det()/detr;
+    tmp.m_data[2][0] = m20.det()/detr;
+    tmp.m_data[3][0] = -m30.det()/detr;
+    tmp.m_data[0][1] = -m01.det()/detr;
     tmp.m_data[1][1] = m11.det()/detr;
-    tmp.m_data[1][2] = -m21.det()/detr;
-    tmp.m_data[1][3] = m31.det()/detr;
-    tmp.m_data[2][0] = m02.det()/detr;
-    tmp.m_data[2][1] = -m12.det()/detr;
+    tmp.m_data[2][1] = -m21.det()/detr;
+    tmp.m_data[3][1] = m31.det()/detr;
+    tmp.m_data[0][2] = m02.det()/detr;
+    tmp.m_data[1][2] = -m12.det()/detr;
     tmp.m_data[2][2] = m22.det()/detr;
-    tmp.m_data[2][3] = -m32.det()/detr;
-    tmp.m_data[3][0] = -m03.det()/detr;
-    tmp.m_data[3][1] = m13.det()/detr;
-    tmp.m_data[3][2] = -m23.det()/detr;
+    tmp.m_data[3][2] = -m32.det()/detr;
+    tmp.m_data[0][3] = -m03.det()/detr;
+    tmp.m_data[1][3] = m13.det()/detr;
+    tmp.m_data[2][3] = -m23.det()/detr;
     tmp.m_data[3][3] = m33.det()/detr;
 
     return tmp;
