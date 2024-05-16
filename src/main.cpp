@@ -85,7 +85,7 @@ int main() {
     renderer.Render(file7, camera_ptr, 2, 16, true);
 
     init(renderer, camera_ptr, file8);
-    renderer.Render(file8, camera_ptr, 2, 20, true);
+    renderer.Render(file8, camera_ptr, 2, 40, true);
 
     std::cout << "STOPPING GLOBAL TIMER!!!" << std::endl;
     timer.Stop();
