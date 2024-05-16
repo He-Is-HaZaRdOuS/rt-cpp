@@ -1,9 +1,8 @@
+#define DOCTEST_CONFIG_IMPLEMENT
+#define PIXELCOUNT 1024
+
 #include <cmath>
 #include <iostream>
-#include <Material/PhongMaterial.h>
-#define DOCTEST_CONFIG_IMPLEMENT
-
-#include <Geometry/Cylinder.h>
 
 #include "Utilities/Macros.h"
 #include "Utilities/Timer.h"
@@ -11,6 +10,7 @@
 #include "Math/Matrix4.h"
 #include "Math/Vector3.h"
 #include "Math/Vector4.h"
+#include <Material/PhongMaterial.h>
 #include "Math/Random.h"
 #include "Beam/Ray.h"
 #include "Beam/Hit.h"
@@ -23,16 +23,11 @@
 #include "Geometry/Triangle.h"
 #include "Geometry/Transform.h"
 #include "Geometry/Plane.h"
+#include <Geometry/Cylinder.h>
 #include "Renderer/Image.h"
 #include "Renderer/Renderer.h"
 #include "Renderer/Light.h"
 #include "Doctest/doctest.h"
-
-#define PIXELCOUNT 512
-
-inline Vector3 reflect(const Vector3& I, const Vector3& N) {
-    return N * 2 * I.dot(N) - I;
-}
 
 void init(Renderer& renderer, std::shared_ptr<Camera>& camera, const std::string& path);
 std::shared_ptr<Camera> collectCamera(const json &data);
@@ -41,58 +36,7 @@ std::vector<DirectionalLight> collectLight(const json &data);
 Group collectScene(const json &data);
 std::vector<PhongMaterial> collectMaterial(const json &data);
 
-void testTranspose() {
-    Matrix4 mat(1.0, 2.0, 3.0, 4.0,
-                5.0, 6.0, 7.0, 8.0,
-                9.0, 10.0, 11.0, 12.0,
-                13.0, 14.0, 15.0, 16.0);
-
-    Matrix4 transposed = mat.transpose();
-
-    Matrix4 expectedTransposed(1.0, 5.0, 9.0, 13.0,
-                               2.0, 6.0, 10.0, 14.0,
-                               3.0, 7.0, 11.0, 15.0,
-                               4.0, 8.0, 12.0, 16.0);
-
-    if (transposed == expectedTransposed) {
-        std::cout << "Transpose test passed." << std::endl;
-    } else {
-        std::cout << "Transpose test failed." << std::endl;
-        std::cout << "Expected: " << expectedTransposed << std::endl;
-        std::cout << "Got: " << transposed << std::endl;
-    }
-}
-
-void testInverse() {
-    Matrix4 mat(4.0, 7.0, 2.0, 3.0,
-                3.0, 6.0, 1.0, 2.0,
-                2.0, 5.0, 1.0, 1.0,
-                1.0, 4.0, 0.0, 1.0);
-
-
-    try {
-        Matrix4 inversed = mat.inverse();
-
-        // Known inverse of the matrix above calculated using an external tool
-        Matrix4 expectedInversed(-1.0, 1.0, 1.0, -1.0,
-                                  2.0, -2.0, -1.0, 2.0,
-                                  -1.0, 2.0, 1.0, -2.0,
-                                  0.0, -1.0, 0.0, 1.0);
-
-        if (inversed == expectedInversed) {
-            std::cout << "Inverse test passed." << std::endl;
-        } else {
-            std::cout << "Inverse test failed." << std::endl;
-            std::cout << "Expected: " << expectedInversed << std::endl;
-            std::cout << "Got: " << inversed << std::endl;
-        }
-    } catch (const std::runtime_error& e) {
-        std::cout << "Inverse test failed with exception: " << e.what() << std::endl;
-    }
-}
-
 int main() {
-
 /*
     doctest::Context context;
 
@@ -108,6 +52,7 @@ int main() {
     std::string file5 = "scene5_transparent_sphere";
     std::string file6 = "scene6_transparent_sphere2";
     std::string file7 = "scene7_cylinder";
+    std::string file8 = "scene8_balls";
 
     /* Construct necessary m_objects */
     std::shared_ptr<Camera> camera_ptr;
@@ -138,6 +83,9 @@ int main() {
 
     init(renderer, camera_ptr, file7);
     renderer.Render(file7, camera_ptr, 2, 16, true);
+
+    init(renderer, camera_ptr, file8);
+    renderer.Render(file8, camera_ptr, 2, 20, true);
 
     std::cout << "STOPPING GLOBAL TIMER!!!" << std::endl;
     timer.Stop();
@@ -624,7 +572,7 @@ Group collectScene(const json &data) {
                                 c0->m_MaterialIndex = stoi(m);
                                 c0->m_Id = id++;
 
-                                scene.m_objects.push_back(c0);
+                                t0->m_object = c0;
                             }
 
                             if(obj0->contains("triangle")){

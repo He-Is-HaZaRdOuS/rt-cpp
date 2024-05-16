@@ -1,0 +1,216 @@
+{
+	"perspectivecamera" : {
+		"center" : [0, 1, 10],
+		"direction" : [0, -0.1, -1],
+		"up" : [0, 1, 0],
+		"angle" : 40
+	},
+	"background" : {
+		"color" : [0.1, 0.9, 0.9],
+		"ambient" : [0.3, 0.3, 0.3]
+	},
+	"group" : [
+		{
+			"sphere" : {
+				"center" : [2, 1, 0],
+				"radius" : 2,
+				"material" : 0
+			}
+		},
+		{ 
+			"sphere" : {
+				"center" : [-3.5, -0.6, 0],
+				"radius" : 0.4,
+				"material" : 1
+			}
+		},
+		{
+			"transform" : {
+				"transformations" : [
+					{
+						"scale" : [0.8, 0.5, 1]
+					}
+				],
+				"object" : {
+					"sphere" : {
+				"center" : [1.5, -0.6, 4],
+				"radius" : 1,
+				"material" : 2
+			}
+				}
+			}
+
+		},
+		{
+			"sphere" : {
+				"center" : [0, -0.4, 2],
+				"radius" : 0.6,
+				"material" : 3
+			}
+		},
+		{
+			"sphere" : {
+				"center" : [-2, -0.2, 3],
+				"radius" : 0.3,
+				"material" : 4
+			}
+		},
+		{
+			"sphere" : {
+				"center" : [-1, -0.6, 2],
+				"radius" : 0.4,
+				"material" : 5
+			}
+		},
+		{
+			"sphere" : {
+				"center" : [-1.6, -0.2, -5],
+				"radius" : 0.8,
+				"material" : 6
+			}
+		},
+		{
+			"plane" : {
+				"normal" : [0.0, 1, 0.0],
+				"offset" : -1,
+				"material" : 7
+			}
+		},
+		{
+			"transform" : {
+				"transformations" : [
+					{
+						"xrotate" : 75
+					},
+					{
+						"scale" : [0.5, 1.2, 1]
+					}
+				],
+				"object" : {
+					"sphere" : {
+						"center" : [8, 4, 4],
+						"radius" : 3,
+						"material" : 8
+					}
+				}
+			}
+
+		},
+		{
+			"cylinder" : {
+				"center" : [-4, 0.0, -7],
+				"axis"	 : [1, 0, 0],
+				"radius" : 0.7,
+				"height" : 2,
+				"material" : 9
+			}
+		}
+	],
+	"lights" : [
+		{
+			"directionalLight" : {
+				"direction" : [0.5, -1, 0],
+				"color" : [0.3, 0.3, 0.3]
+			}
+		},
+		{
+			"directionalLight" : {
+				"direction" : [0, -1, 0.5],
+				"color" : [0.5, 0.5, 0.5]
+			}
+		}
+	],
+	"materials" : [
+		{
+			"phongMaterial" : {
+				"diffuseColor" : [0.8, 0.8, 0.8],
+				"specularColor" : [1, 1, 1],
+				"exponent" : 50,
+				"transparentColor" : [0, 0, 0],
+				"reflectiveColor" : [0.1, 0.1, 0.1],
+				"indexOfRefraction" : 1
+			}
+		},
+		{
+			"phongMaterial" : {
+				"diffuseColor" : [0.1, 0.1, 0.1],
+				"specularColor" : [1, 1, 1],
+				"exponent" : 50,
+				"transparentColor" : [0, 0, 0],
+				"reflectiveColor" : [0.1, 0.1, 0.1],
+				"indexOfRefraction" : 1
+			}
+		},
+				{
+			"phongMaterial" : {
+				"diffuseColor" : [0.1, 0.6, 0.1],
+				"specularColor" : [1, 1, 1],
+				"exponent" : 50,
+				"transparentColor" : [0, 0, 0],
+				"reflectiveColor" : [0.1, 0.5, 0.1],
+				"indexOfRefraction" : 1
+			}
+		},
+				{
+			"phongMaterial" : {
+				"diffuseColor" : [0.2, 0.1, 0.9],
+				"specularColor" : [1, 1, 1],
+				"exponent" : 50,
+				"transparentColor" : [0, 0, 0],
+				"reflectiveColor" : [0.1, 0.1, 0.1],
+				"indexOfRefraction" : 1
+			}
+		},
+				{
+			"phongMaterial" : {
+				"diffuseColor" : [0.8, 0.8, 0.1],
+				"specularColor" : [1, 1, 1],
+				"exponent" : 50,
+				"transparentColor" : [0, 0, 0],
+				"reflectiveColor" : [0.6, 0.6, 0.1],
+				"indexOfRefraction" : 1
+			}
+		},
+				{
+			"phongMaterial" : {
+				"diffuseColor" : [0.0, 1, 1],
+				"specularColor" : [1, 1, 1],
+				"exponent" : 50,
+				"transparentColor" : [0, 0, 0],
+				"reflectiveColor" : [0.1, 0.4, 0.4],
+				"indexOfRefraction" : 1
+			}
+		},
+		{
+			"phongMaterial" : {
+				"diffuseColor" : [1, 0.1, 0.1],
+				"specularColor" : [1, 1, 1],
+				"exponent" : 50,
+				"transparentColor" : [0, 0, 0],
+				"reflectiveColor" : [0.9, 0.1, 0.1],
+				"indexOfRefraction" : 1
+			}
+		},
+		{
+			"phongMaterial" : {
+				"diffuseColor" : [1, 1, 1]
+			}
+		},
+		{
+			"phongMaterial" : {
+				"diffuseColor" : [0.1, 0.84, 0.3],
+				"reflectiveColor" : [0.1, 0.1, 0.1]
+			}
+		},
+				{
+			"phongMaterial" : {
+				"diffuseColor" : [1, 0.1, 1],
+				"specularColor" : [1, 1, 1],
+				"exponent" : 50,
+				"transparentColor" : [0, 0, 0],
+				"reflectiveColor" : [0.8, 0.8, 0.8],
+				"indexOfRefraction" : 1
+			}
+		}
+	]
+}

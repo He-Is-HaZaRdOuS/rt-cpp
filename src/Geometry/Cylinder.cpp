@@ -49,7 +49,7 @@ bool Cylinder::intersect(Ray ray, Hit& hit, const f32 tmin, const f32 tmax) cons
     if (axisDistance > m_radius * m_radius) {
         hit.m_Normal.set_x(capIntersectionPoint.get_x() - m_center.get_x());
         hit.m_Normal.set_y(capIntersectionPoint.get_y() - m_center.get_y());
-        hit.m_Normal.set_z(0.0f);
+        hit.m_Normal.set_z(capIntersectionPoint.get_z() - m_center.get_z());
     }
     else {
         if(t_cap_far > 0.0f) {
