@@ -3,6 +3,8 @@
 #include <Material/PhongMaterial.h>
 #define DOCTEST_CONFIG_IMPLEMENT
 
+#include <Geometry/Cylinder.h>
+
 #include "Utilities/Macros.h"
 #include "Utilities/Timer.h"
 #include "Math/Matrix3.h"
@@ -103,6 +105,7 @@ int main() {
     std::string file4 = "scene4_reflective_sphere";
     std::string file5 = "scene5_transparent_sphere";
     std::string file6 = "scene6_transparent_sphere2";
+    std::string file7 = "scene7_cylinder";
 
     /* Construct necessary m_objects */
     std::shared_ptr<Camera> camera_ptr;
@@ -112,7 +115,7 @@ int main() {
     Timer timer;
 
     /* init m_objects and render scenes */
-
+/*
     init(renderer, camera_ptr,  file1);
     renderer.Render(file1, camera_ptr,  2, 40, true);
 
@@ -130,6 +133,9 @@ int main() {
 
     init(renderer, camera_ptr, file6);
     renderer.Render(file6, camera_ptr, 2, 40, true);
+*/
+    init(renderer, camera_ptr, file7);
+    renderer.Render(file7, camera_ptr, 2, 16, true);
 
     std::cout << "STOPPING GLOBAL TIMER!!!" << std::endl;
     timer.Stop();
@@ -393,6 +399,43 @@ Group collectScene(const json &data) {
                         scene.m_objects.push_back(sp0);
                     }
 
+                    if(n.contains("cylinder")){
+                        //std::cout << n << "\n";
+                        auto const& cylinder = n.find("cylinder");
+                        auto const& center = cylinder->find("center");
+                        auto const& axis = cylinder->find("axis");
+                        auto const& radius = cylinder->find("radius");
+                        auto const& height = cylinder->find("height");
+                        auto const& material = cylinder->find("material");
+
+                        std::shared_ptr<Cylinder> c0 = std::make_shared<Cylinder>(Cylinder());
+
+                        index = 0;
+                        for(auto const& p : *center){
+                            buffer[index++] = p;
+                        }
+                        c0->m_center = {buffer[0], buffer[1], buffer[2]};
+
+                        index = 0;
+                        for(auto const& p : *axis){
+                            buffer[index++] = p;
+                        }
+
+                        c0->m_axis = {buffer[0], buffer[1], buffer[2]};
+
+                        auto r = radius->dump();
+                        auto h = height->dump();
+
+                        c0->m_radius = stof(r);
+                        c0->m_height = stof(h);
+
+                        auto m = material->dump();
+                        c0->m_MaterialIndex = stoi(m);
+                        c0->m_Id = id++;
+
+                        scene.m_objects.push_back(c0);
+                    }
+
                     if(n.contains("triangle")){
                         //std::cout << n << "\n";
                         auto const& triangle = n.find("triangle");
@@ -543,6 +586,43 @@ Group collectScene(const json &data) {
                                 auto m = material->dump();
                                 sp0->m_MaterialIndex = stoi(m);
                                 t0->m_object = sp0;
+                            }
+
+                            if(obj0->contains("cylinder")){
+                                //std::cout << n << "\n";
+                                auto const& cylinder = obj0->find("cylinder");
+                                auto const& center = cylinder->find("center");
+                                auto const& axis = cylinder->find("axis");
+                                auto const& radius = cylinder->find("radius");
+                                auto const& height = cylinder->find("height");
+                                auto const& material = cylinder->find("material");
+
+                                std::shared_ptr<Cylinder> c0 = std::make_shared<Cylinder>(Cylinder());
+
+                                index = 0;
+                                for(auto const& p : *center){
+                                    buffer[index++] = p;
+                                }
+                                c0->m_center = {buffer[0], buffer[1], buffer[2]};
+
+                                index = 0;
+                                for(auto const& p : *axis){
+                                    buffer[index++] = p;
+                                }
+
+                                c0->m_axis = {buffer[0], buffer[1], buffer[2]};
+
+                                auto r = radius->dump();
+                                auto h = height->dump();
+
+                                c0->m_radius = stof(r);
+                                c0->m_height = stof(h);
+
+                                auto m = material->dump();
+                                c0->m_MaterialIndex = stoi(m);
+                                c0->m_Id = id++;
+
+                                scene.m_objects.push_back(c0);
                             }
 
                             if(obj0->contains("triangle")){
