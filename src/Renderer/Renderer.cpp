@@ -14,6 +14,7 @@
 
 #define SSAA 1
 #define SAMPLESIZE 4
+#define BOUNCES 3
 
 Vector3 Renderer::s_BackgroundColor;
 Vector3 Renderer::s_AmbientColor;
@@ -91,7 +92,7 @@ void Renderer::Render(const std::string& filename, const std::shared_ptr<Camera>
     Timer timer;
 
     for(u32 y = 0; y < m_Height; ++y){
-        #pragma omp parallel for schedule(static)
+        #pragma omp parallel for schedule(dynamic) num_threads(16)
         for(u32 x = 0; x < m_Width; ++x){
             s_fragment(x, y, m_Width, m_Height, !monochrome, camera);
         }
@@ -132,7 +133,7 @@ inline void Renderer::s_fragment(const u32 x, const u32 y, const u32 width, cons
         f32 nx = (static_cast<f32>(lx) + sampleArea.get_x())/static_cast<f32>(width);
         f32 ny = (static_cast<f32>(ly) + sampleArea.get_y())/static_cast<f32>(height);
         Ray ray = camera->generateRay(nx, ny);
-        pixelColor = pixelColor + traceRay(ray, m_Near, 3, 1.0, 1.0, hit);
+        pixelColor = pixelColor + traceRay(ray, m_Near, BOUNCES, 1.0, 1.0, hit);
     }
     pixelColor = pixelColor / SAMPLESIZE;
 #else
