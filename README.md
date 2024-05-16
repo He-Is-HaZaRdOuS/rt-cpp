@@ -4,8 +4,18 @@ https://github.com/He-Is-HaZaRdOuS/rt-cpp
 
 # About
 Ongoing naive implementation of Whitted Ray Tracing. </br>
+
 Scenes are loaded from json files and rendered using a single method call. </br>
+
 Everything's done on the CPU currently, plan to offload it onto the GPU later...
+
+
+OpemMP is used to accelerate rendering. </br>
+
+SSAA is implemented to blend jagged edges. </br> 
+
+
+Scenes 7 and 8 showcase multiple features; multiple objects, multiple lights, transformations, reflections and our humble cylinder!
 
 # Disclaimer!
 CMake does not recognize non-english characters in the build path. </br>
