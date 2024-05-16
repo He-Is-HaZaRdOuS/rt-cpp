@@ -28,6 +28,8 @@
 #include "Renderer/Light.h"
 #include "Doctest/doctest.h"
 
+#define PIXELCOUNT 512
+
 inline Vector3 reflect(const Vector3& I, const Vector3& N) {
     return N * 2 * I.dot(N) - I;
 }
@@ -109,13 +111,13 @@ int main() {
 
     /* Construct necessary m_objects */
     std::shared_ptr<Camera> camera_ptr;
-    Renderer renderer = Renderer(512, 512);
+    Renderer renderer = Renderer(PIXELCOUNT, PIXELCOUNT);
 
     std::cout << "STARTING GLOBAL TIMER!!!" << std::endl;
     Timer timer;
 
     /* init m_objects and render scenes */
-/*
+
     init(renderer, camera_ptr,  file1);
     renderer.Render(file1, camera_ptr,  2, 40, true);
 
@@ -133,7 +135,7 @@ int main() {
 
     init(renderer, camera_ptr, file6);
     renderer.Render(file6, camera_ptr, 2, 40, true);
-*/
+
     init(renderer, camera_ptr, file7);
     renderer.Render(file7, camera_ptr, 2, 16, true);
 
@@ -792,10 +794,14 @@ std::vector<PhongMaterial> collectMaterial(const json &data) {
 void init(Renderer& renderer, std::shared_ptr<Camera>& camera, const std::string& path){
     std::ifstream f(RESOURCES_PATH + path + ".json");
     const json data = json::parse(f);
-
+    Renderer r = Renderer(PIXELCOUNT, PIXELCOUNT);
     camera = collectCamera(data);
-    collectBackground(data, renderer);
+    collectBackground(data, r);
+    Renderer::s_scene.m_objects.clear();
+    Renderer::s_lights.clear();
+    Renderer::s_materials.clear();
     Renderer::s_scene = collectScene(data);
     Renderer::s_lights = collectLight(data);
     Renderer::s_materials = collectMaterial(data);
+    renderer = r;
 }

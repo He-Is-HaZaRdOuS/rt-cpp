@@ -15,6 +15,7 @@ public:
     ~OrthographicCamera() override = default;
 
     [[nodiscard]] Ray generateRay(f32 x, f32 y) const override;
+    [[nodiscard]] Ray generateSampledRay(f32 x, f32 y, f32 u, f32 v) const override;
     [[nodiscard]] Vector4 getDirection() const override { return m_direction; };
     [[nodiscard]] Vector4 getPosition() const override { return m_center; };
 

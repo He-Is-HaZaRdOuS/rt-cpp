@@ -30,10 +30,11 @@ public:
     static Group s_scene;
     static std::vector<DirectionalLight> s_lights;
     static std::vector<PhongMaterial> s_materials;
+    static uint64_t s_epoch;
 private:
     void s_save(const std::string& path, bool monochrome) const;
-    inline void s_fragment(f32 x, f32 y, u32 nx, u32 ny, bool monochrome, const std::shared_ptr<Camera>& camera, Hit hit);
-    inline Vector3 traceRay(Ray &ray, f32 tmin, i32 bounces, f32 weight, f32 indexOfRefraction, Hit &hit);
+    inline void s_fragment(u32 x, u32 y, u32 width, u32 height, bool monochrome, const std::shared_ptr<Camera>& camera);
+    inline Vector3 traceRay(const Ray &ray, f32 tmin, i32 bounces, f32 weight, f32 indexOfRefraction, Hit &hit);
 
     Image m_Image;
     Image m_ImageDepth;

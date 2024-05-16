@@ -47,6 +47,7 @@ public:
     friend Vector3 operator-(const Vector3& self);
     friend Vector3 operator*(const Vector3& self, const Vector3& other);
     friend Vector3 operator/(const Vector3& self, const Vector3& other);
+    friend Vector3 operator/(const Vector3& self, f32 other);
 
 private:
     f32 m_data[3];
