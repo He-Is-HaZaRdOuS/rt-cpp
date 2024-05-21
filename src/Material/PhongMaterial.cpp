@@ -1,8 +1,7 @@
 #include "Material/PhongMaterial.h"
-
-#include <cmath>
 #include <Renderer/DirectionalLight.h>
 #include <Renderer/Renderer.h>
+#include <cmath>
 
 inline Vector3 reflect(const Vector3& I, const Vector3& N) {
     return N * 2 * I.dot(N) - I;

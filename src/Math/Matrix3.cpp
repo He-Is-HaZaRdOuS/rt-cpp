@@ -1,6 +1,5 @@
 #include "Math/Matrix3.h"
 #include <cstring>
-#include <cmath>
 
 Matrix3::Matrix3() {
     m_data[0][0] = 1.0;

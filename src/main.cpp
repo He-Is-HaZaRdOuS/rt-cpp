@@ -1,9 +1,6 @@
 #define DOCTEST_CONFIG_IMPLEMENT
 #define PIXELCOUNT 1024
 
-#include <cmath>
-#include <iostream>
-
 #include "Utilities/Macros.h"
 #include "Utilities/Timer.h"
 #include "Math/Matrix3.h"
@@ -28,6 +25,9 @@
 #include "Renderer/Renderer.h"
 #include "Renderer/Light.h"
 #include "Doctest/doctest.h"
+
+#include <cmath>
+#include <iostream>
 
 void init(Renderer& renderer, std::shared_ptr<Camera>& camera, const std::string& path);
 std::shared_ptr<Camera> collectCamera(const json &data);

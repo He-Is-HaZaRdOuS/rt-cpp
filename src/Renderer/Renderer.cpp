@@ -1,20 +1,20 @@
 #include "Renderer/Renderer.h"
+#include "Geometry/Sphere.h"
+#include "Utilities/Timer.h"
+#include <Material/PhongMaterial.h>
+#include <Math/Random.h>
+#include <cmath>
+#include <random>
 
 #define STB_IMAGE_IMPLEMENTATION
 #include "Libs/stb_image.h"
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 #include "Libs/stb_image_write.h"
-#include "Geometry/Sphere.h"
-#include "Utilities/Timer.h"
-//#include "PinnedVector.h"
-#include <cmath>
-#include <random>
-#include <Material/PhongMaterial.h>
-#include <Math/Random.h>
 
-#define SSAA 1
-#define SAMPLESIZE 4
-#define BOUNCES 3
+#define PARALLEL_ENABLED 1
+#define SSAA_ENABLED 1
+#define SSAA_SAMPLE_SIZE 16
+#define RAY_BOUNCES 3
 
 Vector3 Renderer::s_BackgroundColor;
 Vector3 Renderer::s_AmbientColor;
@@ -73,7 +73,7 @@ inline f32 random_float() {
 
 inline f32 randomFloat(uint64_t& seed) {
     seed = PCG_Hash(seed);
-    return static_cast<f32>(seed) / (f32)std::numeric_limits<uint64_t>::max();
+    return static_cast<f32>(seed) / static_cast<f32>(std::numeric_limits<uint64_t>::max());
 }
 
 inline Vector3 sample_square(uint64_t& seed) {
@@ -92,7 +92,9 @@ void Renderer::Render(const std::string& filename, const std::shared_ptr<Camera>
     Timer timer;
 
     for(u32 y = 0; y < m_Height; ++y){
+#if PARALLEL_ENABLED
         #pragma omp parallel for schedule(dynamic) num_threads(16)
+#endif
         for(u32 x = 0; x < m_Width; ++x){
             s_fragment(x, y, m_Width, m_Height, !monochrome, camera);
         }
@@ -126,16 +128,16 @@ inline void Renderer::s_fragment(const u32 x, const u32 y, const u32 width, cons
     u32 ly = y;
     hit.m_Id = -1;
     hit.set_t(m_Far);
-#if SSAA
-    for(u32 s = 0; s < SAMPLESIZE; ++s) {
+#if SSAA_ENABLED
+    for(u32 s = 0; s < SSAA_SAMPLE_SIZE; ++s) {
         Vector3 sampleArea = sample_square(localSeed);
         sampleArea.normalize();
         f32 nx = (static_cast<f32>(lx) + sampleArea.get_x())/static_cast<f32>(width);
         f32 ny = (static_cast<f32>(ly) + sampleArea.get_y())/static_cast<f32>(height);
         Ray ray = camera->generateRay(nx, ny);
-        pixelColor = pixelColor + traceRay(ray, m_Near, BOUNCES, 1.0, 1.0, hit);
+        pixelColor = pixelColor + traceRay(ray, m_Near, RAY_BOUNCES, 1.0, 1.0, hit);
     }
-    pixelColor = pixelColor / SAMPLESIZE;
+    pixelColor = pixelColor / SSAA_SAMPLE_SIZE;
 #else
     f32 nx = (static_cast<f32>(x))/static_cast<f32>(width);
     f32 ny = (static_cast<f32>(y))/static_cast<f32>(height);
@@ -167,7 +169,7 @@ inline void Renderer::s_fragment(const u32 x, const u32 y, const u32 width, cons
 
 Vector3 Renderer::traceRay(const Ray &ray, const f32 tmin, const i32 bounces, const f32 weight, f32 indexOfRefraction, Hit& hit) {
     /* Recursion depth limit */
-    if(bounces <= 0 || weight < 0.1) {
+    if(bounces <= 0 || weight < 0.25) {
         return {0.0, 0.0, 0.0};
     }
 
@@ -182,6 +184,7 @@ Vector3 Renderer::traceRay(const Ray &ray, const f32 tmin, const i32 bounces, co
     /* retrieve material */
     PhongMaterial material = Renderer::s_materials.at(hit.m_MaterialIndex);
     Vector3 rgb = {0.0, 0.0, 0.0};
+    f32 brightnessMultiplier = 1.0;
 
     /* Shoot out ray for every light */
     for(const auto& light : Renderer::s_lights) {
@@ -190,7 +193,8 @@ Vector3 Renderer::traceRay(const Ray &ray, const f32 tmin, const i32 bounces, co
         Hit shadowHit = Hit();
         bool isInShadow = s_scene.inShadow(shadowRay, shadowHit, hit, FLT_EPSILON, m_Far);
         if(!isInShadow) {
-            rgb = rgb + material.shade(ray, hit, light);
+            rgb = rgb + brightnessMultiplier * material.shade(ray, hit, light);
+            rgb.clamp();
         }
 
         Vector3 correctedNormal = hit.m_Normal;
@@ -204,7 +208,7 @@ Vector3 Renderer::traceRay(const Ray &ray, const f32 tmin, const i32 bounces, co
             transmittanceDirection.normalize();
             nTransmittanceDirection.normalize();
 
-            const f32 totalInternalReflection = sqrtf(1 - (correctedRefractionIndex*correctedRefractionIndex) * (1 - powf(hit.m_Normal.dot(transmittanceDirection), 2.0f)));
+            const f32 totalInternalReflection = sqrtf(1 - (correctedRefractionIndex*correctedRefractionIndex) * (1 - powf(correctedNormal.dot(transmittanceDirection), 2.0f)));
 
             //f32 cos_theta = fmin(nTransmittanceDirection.dot(hit.m_Normal), 1.0);
             const bool canRefract = totalInternalReflection > 0.0f;
@@ -222,7 +226,8 @@ Vector3 Renderer::traceRay(const Ray &ray, const f32 tmin, const i32 bounces, co
 
             Ray transmittedRay = Ray(hit.m_Point, refractedVector);
             Hit transmittedHit = Hit();
-            rgb = rgb + material.m_TransparentColor * traceRay(transmittedRay, FLT_EPSILON, bounces-1, weight, material.m_IndexOfRefraction, transmittedHit);
+            rgb = rgb + brightnessMultiplier * material.m_TransparentColor * traceRay(transmittedRay, FLT_EPSILON, bounces-1, weight, material.m_IndexOfRefraction, transmittedHit);
+            rgb.clamp();
         }
 
         /* Reflective Object */
@@ -230,9 +235,10 @@ Vector3 Renderer::traceRay(const Ray &ray, const f32 tmin, const i32 bounces, co
             Vector3 reflectVector = reflect(ray.m_direction.getVec3(), hit.m_Normal);
             Ray reflectRay = Ray(hit.m_Point + correctedNormal * 0.0001, reflectVector);
             Hit reflectHit = Hit();
-            rgb = rgb + material.m_ReflectiveColor * traceRay(reflectRay, FLT_EPSILON, bounces-1, weight, material.m_IndexOfRefraction, reflectHit);
+            rgb = rgb + brightnessMultiplier * material.m_ReflectiveColor * traceRay(reflectRay, FLT_EPSILON, bounces-1, weight, material.m_IndexOfRefraction, reflectHit);
+            rgb.clamp();
         }
-
+        //brightnessMultiplier = brightnessMultiplier * 0.9f;
     }
     return rgb;
 }

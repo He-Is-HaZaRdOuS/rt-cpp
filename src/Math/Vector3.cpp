@@ -73,6 +73,20 @@ void Vector3::clamp() {
     clampup();
 }
 
+void Vector3::equalize() {
+    f32 x = m_data[0];
+    f32 y = m_data[1];
+    f32 z = m_data[2];
+
+    f32 big = std::max(x,y);
+    big = std::max(big, z);
+
+    f32 equalizer = 1.0f / big;
+    m_data[0] = m_data[0] * equalizer;
+    m_data[1] = m_data[1] * equalizer;
+    m_data[2] = m_data[2] * equalizer;
+}
+
 std::ostream& operator<<(std::ostream& os, const Vector3& vector)
 {
     os << "[";

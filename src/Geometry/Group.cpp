@@ -1,6 +1,4 @@
 #include "Geometry/Group.h"
-#include <complex>
-#include "Geometry/Sphere.h"
 
 bool Group::intersect(Ray ray, Hit& hit, const f32 tmin, const f32 tmax) const {
     for(auto const& obj : m_objects) {

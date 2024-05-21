@@ -37,6 +37,7 @@ public:
     void clampup();
     void clampdown();
     void clamp();
+    void equalize();
 
     friend std::ostream& operator<<(std::ostream& os, const Vector3& vector);
     friend Vector3 operator+(const Vector3& self, const Vector3& other);
