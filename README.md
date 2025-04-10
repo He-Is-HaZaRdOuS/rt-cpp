@@ -18,16 +18,16 @@ SSAA is implemented to blend jagged edges. </br>
 Scenes 7 and 8 showcase multiple features; multiple objects, multiple lights, transformations, reflections and our humble cylinder!
 
 # Screenshots
-Exponent Variation
+### Exponent Variation
 ![Alt](art/scene1_exponent_variations.png)
 
-Recursive Reflections
+### Recursive Reflections
 ![Alt](art/scene4_reflective_sphere.png)
 
-Cylinder
+### Cylinder
 ![Alt](art/scene7_cylinder.png)
 
-Balls!
+### Balls!
 ![Alt](art/scene8_balls2.png)
 
 # Disclaimer!
