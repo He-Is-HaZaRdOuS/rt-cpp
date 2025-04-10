@@ -12,10 +12,23 @@ Everything's done on the CPU currently, plan to offload it onto the GPU later...
 
 OpemMP is used to accelerate rendering. </br>
 
-SSAA is implemented to blend jagged edges. </br> 
+SSAA is implemented to blend jagged edges. </br>
 
 
 Scenes 7 and 8 showcase multiple features; multiple objects, multiple lights, transformations, reflections and our humble cylinder!
+
+# Screenshots
+Exponent Variation
+![Alt](art/scene1_exponent_variations.png)
+
+Recursive Reflections
+![Alt](art/scene4_reflective_sphere.png)
+
+Cylinder
+![Alt](art/scene7_cylinder.png)
+
+Balls!
+![Alt](art/scene8_balls2.png)
 
 # Disclaimer!
 CMake does not recognize non-english characters in the build path. </br>
@@ -41,7 +54,7 @@ Open a terminal window and execute the following commands line by line </br>
  wget https://cmake.org/files/v$version/cmake-$version.$build-$os-x86_64.sh
  sudo mkdir /opt/cmake
  sudo sh cmake-$version.$build-$os-x86_64.sh --prefix=/opt/cmake #(Type "y" to accept the license agreement and type "n" to forego installing inside the subdirectory)
- cmake --version #(expected output is "cmake version 3.28.1") 
+ cmake --version #(expected output is "cmake version 3.28.1")
 ```
 </br>
 
